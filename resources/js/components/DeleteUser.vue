@@ -33,15 +33,17 @@ const passwordInput = ref<InstanceType<typeof Input> | null>(null);
             class="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
         >
             <div class="relative space-y-0.5 text-red-600 dark:text-red-100">
-                <p class="font-medium">Warning</p>
+                <p class="font-medium">Peringatan</p>
                 <p class="text-sm">
-                    Please proceed with caution, this cannot be undone.
+                    <!-- Please proceed with caution, this cannot be undone. -->
+                    Harap lanjutkan dengan hati-hati, tindakan ini tidak dapat
+                    dibatalkan.
                 </p>
             </div>
             <Dialog>
                 <DialogTrigger as-child>
                     <Button variant="destructive" data-test="delete-user-button"
-                        >Delete account</Button
+                        >Hapus akun</Button
                     >
                 </DialogTrigger>
                 <DialogContent>
@@ -56,22 +58,28 @@ const passwordInput = ref<InstanceType<typeof Input> | null>(null);
                         v-slot="{ errors, processing, reset, clearErrors }"
                     >
                         <DialogHeader class="space-y-3">
-                            <DialogTitle
-                                >Are you sure you want to delete your
-                                account?</DialogTitle
-                            >
+                            <DialogTitle>
+                                <!-- Are you sure you want to delete your
+                                account? -->
+                                Apakah Anda yakin ingin menghapus akun Anda?
+                            </DialogTitle>
                             <DialogDescription>
-                                Once your account is deleted, all of its
+                                <!-- Once your account is deleted, all of its
                                 resources and data will also be permanently
                                 deleted. Please enter your password to confirm
                                 you would like to permanently delete your
-                                account.
+                                account. -->
+                                Setelah akun Anda dihapus, semua sumber daya dan
+                                data yang terkait juga akan dihapus secara
+                                permanen. Harap masukkan kata sandi Anda untuk
+                                mengonfirmasi bahwa Anda benar-benar ingin
+                                menghapus akun ini secara permanen.
                             </DialogDescription>
                         </DialogHeader>
 
                         <div class="grid gap-2">
                             <Label for="password" class="sr-only"
-                                >Password</Label
+                                >Kata Sandi</Label
                             >
                             <Input
                                 id="password"
@@ -94,7 +102,7 @@ const passwordInput = ref<InstanceType<typeof Input> | null>(null);
                                         }
                                     "
                                 >
-                                    Cancel
+                                    Batal
                                 </Button>
                             </DialogClose>
 
@@ -104,7 +112,7 @@ const passwordInput = ref<InstanceType<typeof Input> | null>(null);
                                 :disabled="processing"
                                 data-test="confirm-delete-user-button"
                             >
-                                Delete account
+                                Hapus akun
                             </Button>
                         </DialogFooter>
                     </Form>

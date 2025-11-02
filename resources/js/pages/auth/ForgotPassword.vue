@@ -17,8 +17,8 @@ defineProps<{
 
 <template>
     <AuthLayout
-        title="Forgot password"
-        description="Enter your email to receive a password reset link"
+        title="Lupa kata sandi?"
+        description="Masukkan email Anda untuk menerima tautan reset kata sandi"
     >
         <Head title="Forgot password" />
 
@@ -32,14 +32,14 @@ defineProps<{
         <div class="space-y-6">
             <Form v-bind="email.form()" v-slot="{ errors, processing }">
                 <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
+                    <Label for="email">Alamat Email</Label>
                     <Input
                         id="email"
                         type="email"
                         name="email"
                         autocomplete="off"
                         autofocus
-                        placeholder="email@example.com"
+                        placeholder="email@gmail.com"
                     />
                     <InputError :message="errors.email" />
                 </div>
@@ -54,14 +54,14 @@ defineProps<{
                             v-if="processing"
                             class="h-4 w-4 animate-spin"
                         />
-                        Email password reset link
+                        Kirim tautan reset kata sandi ke email
                     </Button>
                 </div>
             </Form>
 
             <div class="space-x-1 text-center text-sm text-muted-foreground">
-                <span>Or, return to</span>
-                <TextLink :href="login()">log in</TextLink>
+                <span>Atau, kembali ke</span>
+                <TextLink :href="login()">Masuk</TextLink>
             </div>
         </div>
     </AuthLayout>
