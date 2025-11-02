@@ -13,8 +13,8 @@ import { LoaderCircle } from 'lucide-vue-next';
 
 <template>
     <AuthBase
-        title="Create an account"
-        description="Enter your details below to create your account"
+        title="Buat akun"
+        description="Masukkan detail Anda di bawah ini untuk membuat akun Anda."
     >
         <Head title="Register" />
 
@@ -26,7 +26,22 @@ import { LoaderCircle } from 'lucide-vue-next';
         >
             <div class="grid gap-6">
                 <div class="grid gap-2">
-                    <Label for="name">Name</Label>
+                    <Label for="nik">NIK</Label>
+                    <Input
+                        id="nik"
+                        type="text"
+                        required
+                        autofocus
+                        :tabindex="1"
+                        autocomplete="nik"
+                        name="nik"
+                        placeholder="Nomor Induk Kependudukan"
+                    />
+                    <InputError :message="errors.nik" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="name">Nama</Label>
                     <Input
                         id="name"
                         type="text"
@@ -35,13 +50,13 @@ import { LoaderCircle } from 'lucide-vue-next';
                         :tabindex="1"
                         autocomplete="name"
                         name="name"
-                        placeholder="Full name"
+                        placeholder="Nama lengkap"
                     />
                     <InputError :message="errors.name" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
+                    <Label for="email">Alamat Email</Label>
                     <Input
                         id="email"
                         type="email"
@@ -49,13 +64,13 @@ import { LoaderCircle } from 'lucide-vue-next';
                         :tabindex="2"
                         autocomplete="email"
                         name="email"
-                        placeholder="email@example.com"
+                        placeholder="email@gmail.com"
                     />
                     <InputError :message="errors.email" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password">Password</Label>
+                    <Label for="password">Kata Sandi</Label>
                     <Input
                         id="password"
                         type="password"
@@ -63,13 +78,15 @@ import { LoaderCircle } from 'lucide-vue-next';
                         :tabindex="3"
                         autocomplete="new-password"
                         name="password"
-                        placeholder="Password"
+                        placeholder="Kata Sandi"
                     />
                     <InputError :message="errors.password" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password_confirmation">Confirm password</Label>
+                    <Label for="password_confirmation"
+                        >Konfirmasi kata sandi</Label
+                    >
                     <Input
                         id="password_confirmation"
                         type="password"
@@ -77,7 +94,7 @@ import { LoaderCircle } from 'lucide-vue-next';
                         :tabindex="4"
                         autocomplete="new-password"
                         name="password_confirmation"
-                        placeholder="Confirm password"
+                        placeholder="Konfirmasi kata sandi"
                     />
                     <InputError :message="errors.password_confirmation" />
                 </div>
@@ -93,17 +110,17 @@ import { LoaderCircle } from 'lucide-vue-next';
                         v-if="processing"
                         class="h-4 w-4 animate-spin"
                     />
-                    Create account
+                    Buat akun
                 </Button>
             </div>
 
             <div class="text-center text-sm text-muted-foreground">
-                Already have an account?
+                Sudah punya akun?
                 <TextLink
                     :href="login()"
                     class="underline underline-offset-4"
                     :tabindex="6"
-                    >Log in</TextLink
+                    >Masuk</TextLink
                 >
             </div>
         </Form>
