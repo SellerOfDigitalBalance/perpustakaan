@@ -11,16 +11,41 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
+import { index } from '@/routes/users';
+import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
 import { LayoutGrid } from 'lucide-vue-next';
+import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
-const mainNavItems: NavItem[] = [
+const page = usePage();
+
+// 🟢 Ambil user dari Inertia props
+const user = page.props.auth?.user;
+
+interface NavGroup {
+    label: string;
+    items: {
+        title: string;
+        href: NonNullable<InertiaLinkProps['href']>;
+        icon: any;
+    }[];
+}
+
+const adminNavItems: NavGroup[] = [
     {
-        title: 'Beranda',
-        href: dashboard(),
-        icon: LayoutGrid,
+        label: 'Umum',
+        items: [{ title: 'Beranda', href: dashboard(), icon: LayoutGrid }],
+    },
+    {
+        label: 'Data Master',
+        items: [{ title: 'Pengguna', href: index(), icon: LayoutGrid }],
+    },
+];
+
+const anggotaNavItems: NavGroup[] = [
+    {
+        label: 'Umum',
+        items: [{ title: 'Beranda', href: dashboard(), icon: LayoutGrid }],
     },
 ];
 
@@ -36,6 +61,20 @@ const mainNavItems: NavItem[] = [
 //         icon: BookOpen,
 //     },
 // ];
+
+const mainNavItems = computed(() => {
+    if (user.level === 'admin') {
+        return adminNavItems;
+    } else if (user.level === 'anggota') {
+        return anggotaNavItems;
+        // } else if (user.level === 'guru') {
+        //     return guruNavItems;
+        // } else if (user.level === 'karyawan') {
+        //     return karyawanNavItems;
+    } else {
+        return [];
+    }
+});
 </script>
 
 <template>
@@ -53,7 +92,7 @@ const mainNavItems: NavItem[] = [
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="mainNavItems" />
+            <NavMain :groups="mainNavItems" />
         </SidebarContent>
 
         <SidebarFooter>
