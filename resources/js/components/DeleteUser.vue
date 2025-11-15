@@ -26,8 +26,8 @@ const passwordInput = ref<InstanceType<typeof Input> | null>(null);
 <template>
     <div class="space-y-6">
         <HeadingSmall
-            title="Delete account"
-            description="Delete your account and all of its resources"
+            title="Hapus akun"
+            description="Hapus akun Anda beserta semua datanya"
         />
         <div
             class="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"

@@ -18,11 +18,14 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    protected $table = 'users';
     protected $fillable = [
         'nik',
         'name',
         'email',
         'password',
+        'profile_user',
+        'no_hp'
     ];
 
     /**

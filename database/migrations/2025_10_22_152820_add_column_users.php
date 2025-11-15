@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('nik')->unique()->after('name');
             $table->string('profile_user')->nullable()->after('nik');
             $table->string('no_hp')->nullable()->after('profile_user');
-            $table->enum('level', ['admin', 'anggota'])->default('anggota')->after('no_hp');
+            $table->enum('level', ['admin', 'petugas', 'anggota'])->default('anggota')->after('no_hp');
         });
     }
 

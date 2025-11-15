@@ -39,8 +39,8 @@ const user = page.props.auth.user;
         <SettingsLayout>
             <div class="flex flex-col space-y-6">
                 <HeadingSmall
-                    title="Profile information"
-                    description="Update your name and email address"
+                    title="Informasi Profil"
+                    description="Perbarui nama dan alamat email Anda"
                 />
 
                 <Form
