@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\category;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,13 @@ class UserSeeder extends Seeder
             'nik' => '12345678',
             'level' => 'admin',
             'email_verified_at' => now(),
+        ]);
+        DB::table('categories')->insert([
+            ['name' => 'Romantis'],
+            ['name' => 'Komedi'],
+            ['name' => 'Aksi'],
+            ['name' => 'Horor'],
+            ['name' => 'Petualangan'],
         ]);
     }
 }

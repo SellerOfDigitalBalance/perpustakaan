@@ -9,17 +9,15 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 interface Props {
     columns: Column[];
-    hiddenColumns?: string[];
     data: Record<string, any>[];
     filters?: Record<string, any>;
+    current_page: number;
+    per_page: number;
 }
-const visibleColumns = computed(() =>
-    props.columns.filter((col) => !props.hiddenColumns?.includes(col.key)),
-);
 interface Column {
     key: string;
     label: string;
@@ -80,18 +78,25 @@ const handleSortClick = (key: string) => {
             </TableRow>
         </TableHeader>
 
-        <TableBody>
-            <TableRow
+        <TableBody
+            ><TableRow
                 v-for="(item, i) in data"
                 :key="i"
                 class="transition hover:bg-muted/30"
             >
                 <TableCell
-                    v-for="col in visibleColumns"
+                    v-for="col in columns"
                     :key="col.key"
                     class="whitespace-nowrap"
                 >
-                    <slot :name="col.key" :item="item">
+                    <!-- Default cell -->
+                    <slot
+                        :name="col.key"
+                        :item="item"
+                        :i="i"
+                        :current_page="current_page"
+                        :per_page="per_page"
+                    >
                         {{ item[col.key] ?? '-' }}
                     </slot>
                 </TableCell>

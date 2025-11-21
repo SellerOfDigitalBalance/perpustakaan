@@ -14,26 +14,28 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { create, destroy, edit, index } from '@/routes/users';
-import { BreadcrumbItem, PaginatedResponse, User } from '@/types';
+import AppLayout from '@/layouts/app/AppSidebarLayout.vue';
+import { create, destroy, edit, index, show } from '@/routes/databukus';
+import { Book, BreadcrumbItem, PaginatedResponse } from '@/types/index';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { watchDebounced } from '@vueuse/core';
-import { Pencil, RotateCcw, Trash2 } from 'lucide-vue-next';
+import { Eye, Pencil, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Pengguna',
+        title: 'Data Buku',
         href: index().url,
     },
 ];
+
 const props = defineProps<{
-    userResource: PaginatedResponse<User>;
+    dataBukuResource: PaginatedResponse<Book>;
 }>();
+
 const pagination = computed(() => ({
-    previous: props.userResource.prev_page_url,
-    next: props.userResource.next_page_url,
+    previous: props.dataBukuResource.prev_page_url,
+    next: props.dataBukuResource.next_page_url,
 }));
 const pageProps = computed(() => {
     return (
@@ -48,9 +50,9 @@ const searchQuery = ref(pageProps.value.search ?? '');
 const searchBy = ref('');
 const selectedSort = ref(pageProps.value.sortColumn ?? 'created_at');
 const sortOrder = ref<'asc' | 'desc'>(pageProps.value.order ?? 'asc');
-const updateUsers = () => {
+const updateDataBukus = () => {
     router.get(
-        '/admin/users',
+        '/admin/databukus',
         {
             search: searchQuery.value,
             sortColumn: selectedSort.value,
@@ -67,13 +69,13 @@ function toggleSort(key: string) {
         selectedSort.value = key;
         sortOrder.value = 'asc';
     }
-    updateUsers();
+    updateDataBukus();
 }
 watchDebounced(
     [searchQuery],
     (newQuery, oldQuery) => {
         if (newQuery !== oldQuery) {
-            updateUsers();
+            updateDataBukus();
         }
     },
     { debounce: 500 },
@@ -90,18 +92,22 @@ const handleDelete = (id: number) => {
         },
     });
 };
+
 const columns = [
     { key: 'no', label: 'No' },
-    { key: 'nik', label: 'Nik', sortable: true },
-    { key: 'name', label: 'Nama', sortable: true },
-    { key: 'email', label: 'Email', sortable: true },
-    { key: 'no_hp', label: 'Telepon', sortable: true },
+    { key: 'judul_buku', label: 'Judul Buku', sortable: true },
+    { key: 'penulis_buku', label: 'Penulis Buku', sortable: true },
+    { key: 'penerbit_buku', label: 'Penerbit Buku', sortable: true },
+    { key: 'tahun_terbit', label: 'Tahun Terbit', sortable: true },
+    { key: 'categories_id', label: 'Kategori', sortable: true },
+    // { key: 'ISBN', label: 'ISBN', sortable: true },
+    // { key: 'jumlah_halaman', label: 'Jumlah Halaman', sortable: true },
+    // { key: 'deskripsi_singkat', label: 'Deskripsi Singkat', sortable: true },
     { key: 'actions', label: 'Aksi' },
 ];
 </script>
-
 <template>
-    <Head title="Daftar Pengguna" />
+    <Head title="Data Buku" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="mx-auto mt-5 max-w-6xl overflow-x-auto">
             <Card class="border-transparent">
@@ -121,14 +127,17 @@ const columns = [
                             <select
                                 id="perPage"
                                 v-model="searchBy"
-                                @change="updateUsers"
+                                @change="updateDataBukus"
                                 class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:ring-2 focus:ring-primary focus:outline-none sm:w-40"
                             >
                                 <option value="">- Semua Kolom -</option>
-                                <option value="nik">Nik</option>
-                                <option value="name">Nama</option>
-                                <option value="email">Email</option>
-                                <option value="no_hp">Telepon</option>
+                                <option value="judul_buku">Judul Buku</option>
+                                <option value="penulis_buku">
+                                    Penulis Buku
+                                </option>
+                                <option value="penerbit_buku">
+                                    Penerbit Buku
+                                </option>
                             </select>
                         </div>
                         <Link
@@ -137,16 +146,16 @@ const columns = [
                             class="w-full sm:w-auto"
                         >
                             <Button variant="outline" class="w-full sm:w-40">
-                                Tambah Pengguna
+                                Tambah Buku
                             </Button>
                         </Link>
                     </div>
                     <DataTable
                         :columns="columns"
-                        :data="userResource.data"
-                        :links="userResource.links"
-                        :current_page="props.userResource.current_page"
-                        :per_page="props.userResource.per_page"
+                        :data="dataBukuResource.data"
+                        :links="dataBukuResource.links"
+                        :current_page="props.dataBukuResource.current_page"
+                        :per_page="props.dataBukuResource.per_page"
                         :filters="{
                             search: searchQuery,
                             sortColumn: selectedSort,
@@ -154,33 +163,29 @@ const columns = [
                         }"
                         @toggleSort="toggleSort"
                     >
+                        <template #categories_id="{ item }">
+                            {{ item.category?.name || 'Tidak Ada' }}
+                        </template>
                         <template #no="{ i, current_page, per_page }">
                             {{ (current_page - 1) * per_page + i + 1 }}
                         </template>
-                        <template #actions="{ item: user }">
+                        <template #actions="{ item: databukus }">
                             <div class="flex items-center gap-2">
-                                <!-- Edit -->
-                                <Link :href="edit(user.id)" as="button">
+                                <Link :href="show(databukus.id)" as="button">
+                                    <Button variant="outline" size="icon">
+                                        <Eye class="h-4 w-4" />
+                                    </Button>
+                                </Link>
+
+                                <Link :href="edit(databukus.id)" as="button">
                                     <Button variant="outline" size="icon">
                                         <Pencil class="h-4 w-4" />
                                     </Button>
                                 </Link>
 
-                                <!-- Reset Password -->
-                                <Link
-                                    :href="`${index().url}/${user.id}/reset-password`"
-                                    as="button"
-                                    method="put"
-                                >
-                                    <Button variant="outline" size="icon">
-                                        <RotateCcw class="h-4 w-4" />
-                                    </Button>
-                                </Link>
-
-                                <!-- Hapus -->
                                 <Dialog
-                                    v-model:open="isOpen[user.id]"
-                                    :key="user.id"
+                                    v-model:open="isOpen[databukus.id]"
+                                    :key="databukus.id"
                                 >
                                     <DialogTrigger as-child>
                                         <Button
@@ -203,7 +208,9 @@ const columns = [
                                         <DialogFooter class="gap-2">
                                             <Button
                                                 variant="destructive"
-                                                @click="handleDelete(user.id)"
+                                                @click="
+                                                    handleDelete(databukus.id)
+                                                "
                                             >
                                                 Hapus
                                             </Button>
@@ -226,7 +233,7 @@ const columns = [
         <Pagination
             :previousPage="pagination.previous"
             :nextPage="pagination.next"
-            :links="props.userResource.links"
+            :links="props.dataBukuResource.links"
         />
     </AppLayout>
 </template>
