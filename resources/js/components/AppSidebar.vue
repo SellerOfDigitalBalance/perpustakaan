@@ -11,9 +11,11 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { index } from '@/routes/users';
+import { index as IndexCategories } from '@/routes/categories';
+import { index as IndexBook } from '@/routes/databukus';
+import { index as IndexUser } from '@/routes/users';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
-import { LayoutGrid } from 'lucide-vue-next';
+import { Folders, LayoutGrid, User } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
@@ -38,7 +40,15 @@ const adminNavItems: NavGroup[] = [
     },
     {
         label: 'Data Master',
-        items: [{ title: 'Pengguna', href: index(), icon: LayoutGrid }],
+        items: [
+            { title: 'Pengguna', href: IndexUser(), icon: User },
+            {
+                title: 'Kategori Buku',
+                href: IndexCategories(),
+                icon: Folders,
+            },
+            { title: 'Data Buku', href: IndexBook(), icon: Folders },
+        ],
     },
 ];
 

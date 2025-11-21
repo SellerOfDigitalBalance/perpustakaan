@@ -15,69 +15,34 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { create, destroy, edit, index } from '@/routes/users';
-import { BreadcrumbItem, PaginatedResponse, User } from '@/types';
+import { create, destroy, edit, index } from '@/routes/categories';
+import { BreadcrumbItem, Category, PaginatedResponse } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { watchDebounced } from '@vueuse/core';
-import { Pencil, RotateCcw, Trash2 } from 'lucide-vue-next';
+import { Pencil, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Pengguna',
+        title: 'Kategori Buku',
         href: index().url,
     },
 ];
+
+const columns = [
+    { key: 'no', label: 'No' },
+    { key: 'name', label: 'Nama', sortable: true },
+    { key: 'actions', label: 'Aksi', slot: 'actions' },
+];
+
 const props = defineProps<{
-    userResource: PaginatedResponse<User>;
+    categoryResource: PaginatedResponse<Category>;
 }>();
+console.log('props categoryResource:', props.categoryResource);
 const pagination = computed(() => ({
-    previous: props.userResource.prev_page_url,
-    next: props.userResource.next_page_url,
+    previous: props.categoryResource.prev_page_url,
+    next: props.categoryResource.next_page_url,
 }));
-const pageProps = computed(() => {
-    return (
-        (usePage().props.filters as {
-            search?: string;
-            sortColumn?: string;
-            order?: 'asc' | 'desc';
-        }) || {}
-    );
-});
-const searchQuery = ref(pageProps.value.search ?? '');
-const searchBy = ref('');
-const selectedSort = ref(pageProps.value.sortColumn ?? 'created_at');
-const sortOrder = ref<'asc' | 'desc'>(pageProps.value.order ?? 'asc');
-const updateUsers = () => {
-    router.get(
-        '/admin/users',
-        {
-            search: searchQuery.value,
-            sortColumn: selectedSort.value,
-            order: sortOrder.value,
-            column: searchBy.value,
-        },
-        { preserveState: true },
-    );
-};
-function toggleSort(key: string) {
-    if (selectedSort.value === key) {
-        sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
-    } else {
-        selectedSort.value = key;
-        sortOrder.value = 'asc';
-    }
-    updateUsers();
-}
-watchDebounced(
-    [searchQuery],
-    (newQuery, oldQuery) => {
-        if (newQuery !== oldQuery) {
-            updateUsers();
-        }
-    },
-    { debounce: 500 },
-);
 const isOpen = ref<Record<number, boolean>>({});
 
 const handleDelete = (id: number) => {
@@ -90,18 +55,52 @@ const handleDelete = (id: number) => {
         },
     });
 };
-const columns = [
-    { key: 'no', label: 'No' },
-    { key: 'nik', label: 'Nik', sortable: true },
-    { key: 'name', label: 'Nama', sortable: true },
-    { key: 'email', label: 'Email', sortable: true },
-    { key: 'no_hp', label: 'Telepon', sortable: true },
-    { key: 'actions', label: 'Aksi' },
-];
+
+const pageProps = computed(() => {
+    return (
+        (usePage().props.filters as {
+            search?: string;
+            sortColumn?: string;
+            order?: 'asc' | 'desc';
+        }) || {}
+    );
+});
+const searchQuery = ref(pageProps.value.search ?? '');
+const selectedSort = ref(pageProps.value.sortColumn ?? 'created_at');
+const sortOrder = ref<'asc' | 'desc'>(pageProps.value.order ?? 'asc');
+const updateCategory = () => {
+    router.get(
+        '/admin/categories',
+        {
+            search: searchQuery.value,
+            sortColumn: selectedSort.value,
+            order: sortOrder.value,
+        },
+        { preserveState: true },
+    );
+};
+function toggleSort(key: string) {
+    if (selectedSort.value === key) {
+        sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+    } else {
+        selectedSort.value = key;
+        sortOrder.value = 'asc';
+    }
+    updateCategory();
+}
+watchDebounced(
+    [searchQuery],
+    (newQuery, oldQuery) => {
+        if (newQuery !== oldQuery) {
+            updateCategory();
+        }
+    },
+    { debounce: 500 },
+);
 </script>
 
 <template>
-    <Head title="Daftar Pengguna" />
+    <Head title="Kategoru Buku" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="mx-auto mt-5 max-w-6xl overflow-x-auto">
             <Card class="border-transparent">
@@ -109,44 +108,28 @@ const columns = [
                     <div
                         class="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center"
                     >
-                        <div
-                            class="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center"
-                        >
-                            <Input
-                                id="searchQuery"
-                                class="w-full sm:w-64"
-                                v-model="searchQuery"
-                                placeholder="Cari..."
-                            />
-                            <select
-                                id="perPage"
-                                v-model="searchBy"
-                                @change="updateUsers"
-                                class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:ring-2 focus:ring-primary focus:outline-none sm:w-40"
-                            >
-                                <option value="">- Semua Kolom -</option>
-                                <option value="nik">Nik</option>
-                                <option value="name">Nama</option>
-                                <option value="email">Email</option>
-                                <option value="no_hp">Telepon</option>
-                            </select>
-                        </div>
+                        <Input
+                            id="searchQuery"
+                            class="w-full sm:w-64"
+                            v-model="searchQuery"
+                            placeholder="Cari..."
+                        />
                         <Link
                             :href="create().url"
                             as="button"
                             class="w-full sm:w-auto"
                         >
                             <Button variant="outline" class="w-full sm:w-40">
-                                Tambah Pengguna
+                                Tambah Kategori
                             </Button>
                         </Link>
                     </div>
                     <DataTable
                         :columns="columns"
-                        :data="userResource.data"
-                        :links="userResource.links"
-                        :current_page="props.userResource.current_page"
-                        :per_page="props.userResource.per_page"
+                        :data="props.categoryResource.data"
+                        :links="props.categoryResource.links"
+                        :current_page="props.categoryResource.current_page"
+                        :per_page="props.categoryResource.per_page"
                         :filters="{
                             search: searchQuery,
                             sortColumn: selectedSort,
@@ -157,30 +140,19 @@ const columns = [
                         <template #no="{ i, current_page, per_page }">
                             {{ (current_page - 1) * per_page + i + 1 }}
                         </template>
-                        <template #actions="{ item: user }">
+                        <template #actions="{ item: categories }">
                             <div class="flex items-center gap-2">
                                 <!-- Edit -->
-                                <Link :href="edit(user.id)" as="button">
+                                <Link :href="edit(categories.id)" as="button">
                                     <Button variant="outline" size="icon">
                                         <Pencil class="h-4 w-4" />
                                     </Button>
                                 </Link>
 
-                                <!-- Reset Password -->
-                                <Link
-                                    :href="`${index().url}/${user.id}/reset-password`"
-                                    as="button"
-                                    method="put"
-                                >
-                                    <Button variant="outline" size="icon">
-                                        <RotateCcw class="h-4 w-4" />
-                                    </Button>
-                                </Link>
-
                                 <!-- Hapus -->
                                 <Dialog
-                                    v-model:open="isOpen[user.id]"
-                                    :key="user.id"
+                                    v-model:open="isOpen[categories.id]"
+                                    :key="categories.id"
                                 >
                                     <DialogTrigger as-child>
                                         <Button
@@ -203,7 +175,9 @@ const columns = [
                                         <DialogFooter class="gap-2">
                                             <Button
                                                 variant="destructive"
-                                                @click="handleDelete(user.id)"
+                                                @click="
+                                                    handleDelete(categories.id)
+                                                "
                                             >
                                                 Hapus
                                             </Button>
@@ -226,7 +200,7 @@ const columns = [
         <Pagination
             :previousPage="pagination.previous"
             :nextPage="pagination.next"
-            :links="props.userResource.links"
+            :links="props.categoryResource.links"
         />
     </AppLayout>
 </template>

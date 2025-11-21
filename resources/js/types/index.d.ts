@@ -41,6 +41,23 @@ export interface User {
     updated_at: string;
 }
 
+export interface Category {
+    id: number;
+    name: string;
+}
+
+export interface Book {
+    id: number;
+    judul_buku: string;
+    penulis_buku: string;
+    penerbit_buku: string;
+    tahun_terbit: number;
+    categories_id: number;
+    ISBN: string;
+    jumlah_halaman: number;
+    deskripsi_singkat: string;
+}
+
 export type BreadcrumbItemType = BreadcrumbItem;
 
 export interface PaginatedResponse<T> {
