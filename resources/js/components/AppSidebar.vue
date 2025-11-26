@@ -13,9 +13,11 @@ import {
 import { dashboard } from '@/routes';
 import { index as IndexCategories } from '@/routes/categories';
 import { index as IndexBook } from '@/routes/databukus';
+import { index as IndexPeminjaman } from '@/routes/peminjamanbukus';
+import { index as IndexPengajuanPeminjaman } from '@/routes/pengajuanpeminjamans';
 import { index as IndexUser } from '@/routes/users';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
-import { Folders, LayoutGrid, User } from 'lucide-vue-next';
+import { BookOpen, Folders, LayoutGrid, User } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
@@ -47,7 +49,17 @@ const adminNavItems: NavGroup[] = [
                 href: IndexCategories(),
                 icon: Folders,
             },
-            { title: 'Data Buku', href: IndexBook(), icon: Folders },
+            { title: 'Data Buku', href: IndexBook(), icon: BookOpen },
+        ],
+    },
+    {
+        label: 'Transaksi',
+        items: [
+            {
+                title: 'Pengajuan Peminjaman',
+                href: IndexPengajuanPeminjaman(),
+                icon: BookOpen,
+            },
         ],
     },
 ];
@@ -56,6 +68,26 @@ const anggotaNavItems: NavGroup[] = [
     {
         label: 'Umum',
         items: [{ title: 'Beranda', href: dashboard(), icon: LayoutGrid }],
+    },
+    {
+        label: 'Transaksi',
+        items: [
+            {
+                title: 'Peminjaman Buku',
+                href: IndexPeminjaman(),
+                icon: BookOpen,
+            },
+            // {
+            //     title: 'Daftar Pengajuan Peminjaman',
+            //     href: IndexPeminjaman(),
+            //     icon: BookOpen,
+            // },
+            // {
+            //     title: 'Riwayat Peminjaman',
+            //     href: IndexPeminjaman(),
+            //     icon: BookOpen,
+            // },
+        ],
     },
 ];
 

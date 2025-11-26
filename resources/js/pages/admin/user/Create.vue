@@ -212,9 +212,6 @@ const submit = () => {
 
                                     <div class="grid gap-2">
                                         <Label for="level">Level</Label>
-                                        <InputError
-                                            :message="form.errors.level"
-                                        />
                                         <Select
                                             v-model="form.level"
                                             id="level"
@@ -239,6 +236,9 @@ const submit = () => {
                                                 </SelectGroup>
                                             </SelectContent>
                                         </Select>
+                                        <InputError
+                                            :message="form.errors.level"
+                                        />
                                     </div>
 
                                     <div class="grid gap-2">

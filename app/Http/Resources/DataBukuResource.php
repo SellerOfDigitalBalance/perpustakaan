@@ -21,6 +21,7 @@ class DataBukuResource extends JsonResource
             'penerbit_buku' => $this->penerbit_buku,
             'tahun_terbit' => $this->tahun_terbit,
             'categories_id' => $this->categories_id,
+            'category' => new CategoryResource($this->whenLoaded('category')),
             'ISBN' => $this->ISBN,
             'jumlah_halaman' => $this->jumlah_halaman,
             'deskripsi_singkat' => $this->deskripsi_singkat,

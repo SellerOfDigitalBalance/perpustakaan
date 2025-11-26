@@ -13,49 +13,29 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { create, destroy, edit, index } from '@/routes/categories';
-import { BreadcrumbItem, Category, PaginatedResponse } from '@/types';
+import { Textarea } from '@/components/ui/textarea';
+import AppLayout from '@/layouts/app/AppSidebarLayout.vue';
+import { index, show, store } from '@/routes/peminjamanbukus';
+import { Book, BreadcrumbItem, PaginatedResponse } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { watchDebounced } from '@vueuse/core';
-import { Pencil, Trash2 } from 'lucide-vue-next';
+import { Eye } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Kategori Buku',
+        title: 'Peminjaman Buku',
         href: index().url,
     },
 ];
-
-const columns = [
-    { key: 'no', label: 'No' },
-    { key: 'name', label: 'Nama', sortable: true },
-    { key: 'actions', label: 'Aksi', slot: 'actions' },
-];
-
 const props = defineProps<{
-    categoryResource: PaginatedResponse<Category>;
+    peminjamanbukuResource: PaginatedResponse<Book>;
 }>();
-console.log('props categoryResource:', props.categoryResource);
+// console.log(props.peminjamanbukuResource);
 const pagination = computed(() => ({
-    previous: props.categoryResource.prev_page_url,
-    next: props.categoryResource.next_page_url,
+    previous: props.peminjamanbukuResource.prev_page_url,
+    next: props.peminjamanbukuResource.next_page_url,
 }));
-const isOpen = ref<Record<number, boolean>>({});
-
-const handleDelete = (id: number) => {
-    console.log('Button hapus ditekan, isOpen:', isOpen.value);
-
-    router.delete(destroy.url(id), {
-        onSuccess: () => {
-            isOpen.value[id] = false;
-            // Tutup dialog setelah sukses hapus
-        },
-    });
-};
-
 const pageProps = computed(() => {
     return (
         (usePage().props.filters as {
@@ -66,15 +46,17 @@ const pageProps = computed(() => {
     );
 });
 const searchQuery = ref(pageProps.value.search ?? '');
+const searchBy = ref('');
 const selectedSort = ref(pageProps.value.sortColumn ?? 'created_at');
 const sortOrder = ref<'asc' | 'desc'>(pageProps.value.order ?? 'asc');
-const updateCategory = () => {
+const updatePeminjamanBukus = () => {
     router.get(
-        '/categories',
+        '/peminjamanbukus',
         {
             search: searchQuery.value,
             sortColumn: selectedSort.value,
             order: sortOrder.value,
+            column: searchBy.value,
         },
         { preserveState: true },
     );
@@ -86,50 +68,58 @@ function toggleSort(key: string) {
         selectedSort.value = key;
         sortOrder.value = 'asc';
     }
-    updateCategory();
+    updatePeminjamanBukus();
 }
 watchDebounced(
     [searchQuery],
     (newQuery, oldQuery) => {
         if (newQuery !== oldQuery) {
-            updateCategory();
+            updatePeminjamanBukus();
         }
     },
     { debounce: 500 },
 );
+const columns = [
+    { key: 'no', label: 'No' },
+    { key: 'judul_buku', label: 'Judul Buku', sortable: true },
+    { key: 'penulis_buku', label: 'Penulis Buku', sortable: true },
+    { key: 'penerbit_buku', label: 'Penerbit Buku', sortable: true },
+    { key: 'tahun_terbit', label: 'Tahun Terbit', sortable: true },
+    { key: 'categories_id', label: 'Kategori', sortable: true },
+    { key: 'actions', label: 'Aksi' },
+];
+const isOpen = ref<Record<number, boolean>>({});
+const catatan = ref('');
+const handleRequestPinjam = (data_bukus_id: number) => {
+    router.post(
+        store().url,
+        {
+            data_bukus_id: data_bukus_id,
+            catatan: catatan.value ?? null, // jika ada form catatan
+        },
+        {
+            onSuccess: () => {
+                isOpen.value[data_bukus_id] = false;
+                console.log('Permintaan pinjam berhasil dikirim ke admin.');
+            },
+        },
+    );
+};
 </script>
-
 <template>
-    <Head title="Kategoru Buku" />
+    <Head title="Peminjaman Buku" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="mx-auto mt-5 max-w-6xl overflow-x-auto">
             <Card class="border-transparent">
                 <CardContent>
-                    <div
-                        class="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center"
-                    >
-                        <Input
-                            id="searchQuery"
-                            class="w-full sm:w-64"
-                            v-model="searchQuery"
-                            placeholder="Cari..."
-                        />
-                        <Link
-                            :href="create().url"
-                            as="button"
-                            class="w-full sm:w-auto"
-                        >
-                            <Button variant="outline" class="w-full sm:w-40">
-                                Tambah Kategori
-                            </Button>
-                        </Link>
-                    </div>
                     <DataTable
                         :columns="columns"
-                        :data="props.categoryResource.data"
-                        :links="props.categoryResource.links"
-                        :current_page="props.categoryResource.current_page"
-                        :per_page="props.categoryResource.per_page"
+                        :data="peminjamanbukuResource.data"
+                        :links="peminjamanbukuResource.links"
+                        :current_page="
+                            props.peminjamanbukuResource.current_page
+                        "
+                        :per_page="props.peminjamanbukuResource.per_page"
                         :filters="{
                             search: searchQuery,
                             sortColumn: selectedSort,
@@ -140,46 +130,69 @@ watchDebounced(
                         <template #no="{ i, current_page, per_page }">
                             {{ (current_page - 1) * per_page + i + 1 }}
                         </template>
-                        <template #actions="{ item: categories }">
+                        <template #categories_id="{ item }">
+                            {{ item.category?.name || 'Tidak Ada' }}
+                        </template>
+                        <template #actions="{ item: peminjamanbukus }">
                             <div class="flex items-center gap-2">
-                                <!-- Edit -->
-                                <Link :href="edit(categories.id)" as="button">
+                                <Link
+                                    :href="show(peminjamanbukus.id)"
+                                    as="button"
+                                >
                                     <Button variant="outline" size="icon">
-                                        <Pencil class="h-4 w-4" />
+                                        <Eye class="h-4 w-4" />
                                     </Button>
                                 </Link>
-
-                                <!-- Hapus -->
                                 <Dialog
-                                    v-model:open="isOpen[categories.id]"
-                                    :key="categories.id"
+                                    v-model:open="isOpen[peminjamanbukus.id]"
+                                    :key="peminjamanbukus.id"
                                 >
                                     <DialogTrigger as-child>
                                         <Button
                                             variant="destructive"
                                             size="icon"
+                                            class="w-full sm:w-20"
                                         >
-                                            <Trash2 class="h-4 w-4" />
+                                            Ajukan
                                         </Button>
                                     </DialogTrigger>
-                                    <DialogContent class="sm:max-w-md">
+                                    <DialogContent class="sm:max-w-xl">
                                         <DialogHeader>
                                             <DialogTitle
-                                                >Konfirmasi Hapus</DialogTitle
+                                                >Konfirmasi Pengajuan Peminjaman
+                                                Buku</DialogTitle
                                             >
+                                            <h1 class="mt-2">
+                                                Dengan Judul:
+                                                <strong>{{
+                                                    peminjamanbukus.judul_buku
+                                                }}</strong>
+                                            </h1>
                                             <DialogDescription>
-                                                Apakah Anda yakin ingin
-                                                menghapus pengguna ini?
+                                                Silakan konfirmasi bahwa Anda
+                                                ingin mengirim permintaan
+                                                peminjaman buku ini. Pengajuan
+                                                akan diteruskan ke admin untuk
+                                                diproses.
                                             </DialogDescription>
+
+                                            <Textarea
+                                                id="catatan"
+                                                class="mt-5 w-full"
+                                                v-model="catatan"
+                                                placeholder="Catatan..."
+                                            />
                                         </DialogHeader>
                                         <DialogFooter class="gap-2">
                                             <Button
                                                 variant="destructive"
                                                 @click="
-                                                    handleDelete(categories.id)
+                                                    handleRequestPinjam(
+                                                        peminjamanbukus.id,
+                                                    )
                                                 "
                                             >
-                                                Hapus
+                                                Konfirmasi
                                             </Button>
                                             <DialogClose as-child>
                                                 <Button
@@ -200,7 +213,7 @@ watchDebounced(
         <Pagination
             :previousPage="pagination.previous"
             :nextPage="pagination.next"
-            :links="props.categoryResource.links"
+            :links="props.peminjamanbukuResource.links"
         />
     </AppLayout>
 </template>

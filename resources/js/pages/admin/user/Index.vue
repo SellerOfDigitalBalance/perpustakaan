@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { create, destroy, edit, index } from '@/routes/users';
+import { create, destroy, edit, index, resetPassword } from '@/routes/users';
 import { BreadcrumbItem, PaginatedResponse, User } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { watchDebounced } from '@vueuse/core';
@@ -50,7 +50,7 @@ const selectedSort = ref(pageProps.value.sortColumn ?? 'created_at');
 const sortOrder = ref<'asc' | 'desc'>(pageProps.value.order ?? 'asc');
 const updateUsers = () => {
     router.get(
-        '/admin/users',
+        '/users',
         {
             search: searchQuery.value,
             sortColumn: selectedSort.value,
@@ -168,7 +168,7 @@ const columns = [
 
                                 <!-- Reset Password -->
                                 <Link
-                                    :href="`${index().url}/${user.id}/reset-password`"
+                                    :href="`${resetPassword(user.id).url}`"
                                     as="button"
                                     method="put"
                                 >

@@ -20,4 +20,9 @@ class Category extends Model
     {
         return $this->hasMany(DataBuku::class, 'categories_id');
     }
+
+    public function peminjamanbukus()
+    {
+        return $this->hasMany(PeminjamanBuku::class, 'categories_id');
+    }
 }

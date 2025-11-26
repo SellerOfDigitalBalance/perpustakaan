@@ -2,22 +2,22 @@
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
 import ShowData from '@/components/ShowData.vue';
 import { Card, CardContent } from '@/components/ui/card';
-import { index, show } from '@/routes/databukus';
+import { index, show } from '@/routes/peminjamanbukus';
 import { Book, BreadcrumbItem } from '@/types';
 
-const { currentBook } = defineProps<{
-    currentBook: {
+const { currentPeminjaman } = defineProps<{
+    currentPeminjaman: {
         data: Book;
     };
 }>();
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Data Buku',
+        title: 'Peminjaman Buku',
         href: index().url,
     },
     {
         title: 'Detail Buku',
-        href: show(currentBook.data.id).url,
+        href: show(currentPeminjaman.data.id).url,
     },
 ];
 const columns = [
@@ -38,7 +38,7 @@ const columns = [
         </div>
         <Card class="border-transparent">
             <CardContent>
-                <ShowData :columns="columns" :data="currentBook.data">
+                <ShowData :columns="columns" :data="currentPeminjaman.data">
                     <template #categories_id="{ data }">
                         {{ data.category?.name || 'Tidak Ada' }}
                     </template>

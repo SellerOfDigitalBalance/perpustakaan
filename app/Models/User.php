@@ -53,4 +53,9 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+
+    public function peminjaman()
+    {
+        return $this->hasMany(PeminjamanBuku::class, 'user_id');
+    }
 }

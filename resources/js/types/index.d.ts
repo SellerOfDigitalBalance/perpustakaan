@@ -58,6 +58,18 @@ export interface Book {
     deskripsi_singkat: string;
 }
 
+export interface PengajuanPeminjaman {
+    id: number;
+    users_id: number;
+    kode_transaksi: string;
+    data_bukus_id: number;
+    tanggal_peminjaman: string;
+    tanggal_jatuh_tempo: string;
+    tanggal_pengembalian: string;
+    status: string;
+    catatan: string;
+}
+
 export type BreadcrumbItemType = BreadcrumbItem;
 
 export interface PaginatedResponse<T> {

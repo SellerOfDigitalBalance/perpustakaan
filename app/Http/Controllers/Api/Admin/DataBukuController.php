@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\DataBukuResource;
 use App\Models\DataBuku;
 use Illuminate\Http\Request;
@@ -15,10 +16,21 @@ class DataBukuController extends Controller
     public function index(Request $request)
     {
         $query = DataBuku::with('category');
-        if ($request->filled('search_by') && $request->filled('search')) {
-            $searchBy = $request->get('search_by');
-            $search = $request->get('search');
-            $query->where($searchBy, 'like', '%' . $search . '%');
+        if ($request->search) {
+            $search = strtolower($request->search);
+            $column = $request->column;
+
+            if ($column && in_array($column, ['judul_buku', 'penulis_buku', 'penerbit_buku', 'tahun_terbit'])) {
+                $query->where($column, 'like', "%{$search}%");
+            } else {
+                $query->where(function ($q) use ($search) {
+                    $q->orWhere('judul_buku', 'like', "%{$search}%")
+                        ->orWhere('penulis_buku', 'like', "%{$search}%")
+                        ->orWhere('penerbit_buku', 'like', "%{$search}%")
+                        ->orWhere('tahun_terbit', 'like', "%{$search}%")
+                        ->orWhere('categories_id', 'like', "%{$search}%");
+                });
+            }
         }
         $perPage = request()->get('per_page', 8);
         $dataBuku = $query->paginate($perPage)->appends($request->all());
@@ -61,8 +73,9 @@ class DataBukuController extends Controller
      */
     public function show(DataBuku $databuku)
     {
+        $databuku->load(['category']);
         // dd($databuku);
-        return inertia('admin/dataBuku/Show', [
+        return Inertia::render('admin/dataBuku/Index', [
             'currentBook' => new DataBukuResource($databuku),
         ]);
     }

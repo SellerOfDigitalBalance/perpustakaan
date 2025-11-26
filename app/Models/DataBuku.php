@@ -23,4 +23,9 @@ class DataBuku extends Model
     {
         return $this->belongsTo(category::class, 'categories_id');
     }
+
+    public function peminjaman()
+    {
+        return $this->hasMany(PeminjamanBuku::class, 'data_bukus_id');
+    }
 }

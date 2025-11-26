@@ -52,7 +52,7 @@ const selectedSort = ref(pageProps.value.sortColumn ?? 'created_at');
 const sortOrder = ref<'asc' | 'desc'>(pageProps.value.order ?? 'asc');
 const updateDataBukus = () => {
     router.get(
-        '/admin/databukus',
+        '/databukus',
         {
             search: searchQuery.value,
             sortColumn: selectedSort.value,
@@ -100,9 +100,6 @@ const columns = [
     { key: 'penerbit_buku', label: 'Penerbit Buku', sortable: true },
     { key: 'tahun_terbit', label: 'Tahun Terbit', sortable: true },
     { key: 'categories_id', label: 'Kategori', sortable: true },
-    // { key: 'ISBN', label: 'ISBN', sortable: true },
-    // { key: 'jumlah_halaman', label: 'Jumlah Halaman', sortable: true },
-    // { key: 'deskripsi_singkat', label: 'Deskripsi Singkat', sortable: true },
     { key: 'actions', label: 'Aksi' },
 ];
 </script>
@@ -138,6 +135,10 @@ const columns = [
                                 <option value="penerbit_buku">
                                     Penerbit Buku
                                 </option>
+                                <option value="tahun_terbit">
+                                    Tahun Terbit
+                                </option>
+                                <option value="categories_id">Kategori</option>
                             </select>
                         </div>
                         <Link
