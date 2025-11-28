@@ -13,6 +13,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { index, show, store } from '@/routes/pengajuanpeminjamans';
 import {
@@ -86,7 +87,7 @@ const columns = [
     { key: 'no', label: 'No' },
     { key: 'users_id', label: 'Nama Anggota', sortable: true },
     { key: 'kode_transaksi', label: 'Kode Transaksi', sortable: true },
-    { key: 'data_bukus_id', label: 'judul Buku', sortable: true },
+    { key: 'data_bukus_id', label: 'Judul Buku', sortable: true },
     // { key: 'tanggal_peminjaman', label: 'Tanggal Peminjaman', sortable: true },
     { key: 'status', label: 'status', sortable: true },
     // { key: 'catatan', label: 'catatan', sortable: true },
@@ -115,6 +116,35 @@ const handleTerimaPengajuan = (id: number) => {
         <div class="mx-auto mt-5 max-w-6xl overflow-x-auto">
             <Card class="border-transparent">
                 <CardContent>
+                    <div
+                        class="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center"
+                    >
+                        <div
+                            class="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center"
+                        >
+                            <Input
+                                id="searchQuery"
+                                class="w-full sm:w-64"
+                                v-model="searchQuery"
+                                placeholder="Cari..."
+                            />
+                            <select
+                                id="perPage"
+                                v-model="searchBy"
+                                @change="updatepengajuanpeminjamans"
+                                class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:ring-2 focus:ring-primary focus:outline-none sm:w-40"
+                            >
+                                <option value="">- Semua Kolom -</option>
+                                <option value="users_id">Nama Anggota</option>
+                                <option value="kode_transaksi">
+                                    Kode Transaksi
+                                </option>
+                                <option value="data_bukus_id">
+                                    Judul Buku
+                                </option>
+                            </select>
+                        </div>
+                    </div>
                     <DataTable
                         :columns="columns"
                         :data="PengajuanPeminjamanResource.data"

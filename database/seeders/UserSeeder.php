@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\category;
+use App\Models\DataBuku;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -30,5 +32,7 @@ class UserSeeder extends Seeder
             ['name' => 'Horor'],
             ['name' => 'Petualangan'],
         ]);
+        User::factory(5)->create();
+        DataBuku::factory(20)->create();
     }
 }

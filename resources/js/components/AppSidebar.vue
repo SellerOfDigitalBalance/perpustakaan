@@ -15,6 +15,7 @@ import { index as IndexCategories } from '@/routes/categories';
 import { index as IndexBook } from '@/routes/databukus';
 import { index as IndexPeminjaman } from '@/routes/peminjamanbukus';
 import { index as IndexPengajuanPeminjaman } from '@/routes/pengajuanpeminjamans';
+import { index as IndexStatusPeminjamans } from '@/routes/statuspeminjamans/index';
 import { index as IndexUser } from '@/routes/users';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, Folders, LayoutGrid, User } from 'lucide-vue-next';
@@ -58,6 +59,11 @@ const adminNavItems: NavGroup[] = [
             {
                 title: 'Pengajuan Peminjaman',
                 href: IndexPengajuanPeminjaman(),
+                icon: BookOpen,
+            },
+            {
+                title: 'Status Peminjaman Buku',
+                href: IndexStatusPeminjamans(),
                 icon: BookOpen,
             },
         ],

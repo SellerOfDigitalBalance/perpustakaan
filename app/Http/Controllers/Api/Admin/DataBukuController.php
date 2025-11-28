@@ -75,7 +75,7 @@ class DataBukuController extends Controller
     {
         $databuku->load(['category']);
         // dd($databuku);
-        return Inertia::render('admin/dataBuku/Index', [
+        return Inertia::render('admin/dataBuku/Show', [
             'currentBook' => new DataBukuResource($databuku),
         ]);
     }

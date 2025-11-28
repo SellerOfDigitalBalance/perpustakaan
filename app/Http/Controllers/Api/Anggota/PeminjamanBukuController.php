@@ -20,15 +20,45 @@ class PeminjamanBukuController extends Controller
     {
 
         $query = DataBuku::with('category');
-        if ($request->filled('search_by') && $request->filled('search')) {
-            $searchBy = $request->get('search_by');
-            $search = $request->get('search');
-            $query->where($searchBy, 'like', '%' . $search . '%');
+        if ($request->search) {
+            $search = strtolower($request->search);
+            $column = $request->column;
+
+            if ($column && in_array($column, ['judul_buku', 'penulis_buku', 'penerbit_buku', 'tahun_terbit'])) {
+                $query->where($column, 'like', "%{$search}%");
+            } else {
+
+                $query->where(function ($q) use ($search) {
+                    $q->orWhere('judul_buku', 'like', "%{$search}%")
+                        ->orWhere('penulis_buku', 'like', "%{$search}%")
+                        ->orWhere('penerbit_buku', 'like', "%{$search}%")
+                        ->orWhere('tahun_terbit', 'like', "%{$search}%");
+                });
+            }
+        }
+        if ($request->has('sortColumn') && $request->has('order')) {
+            $sortColumn = $request->input('sortColumn');
+            $order = $request->input('order');
+
+            if ($sortColumn === 'users_id') {
+                $query->join('users_id', 'users.users_id', '=', 'users.id')
+                    ->orderBy('users.name', $order)
+                    ->select('users.*');
+            } elseif ($sortColumn === 'data_bukus_id') {
+                $query->join('data_bukus_id', 'databukus.data_bukus_id', '=', 'databukus.id')
+                    ->orderBy('databukus.name', $order)
+                    ->select('databukus.*');
+            } elseif ($sortColumn === 'kode_transaksi') {
+                $query->orderBy($sortColumn, $order);
+            } elseif ($sortColumn === 'status') {
+                $query->orderBy($sortColumn, $order);
+            }
+        } else {
+            $query->latest();
         }
         $perPage = request()->get('per_page', 8);
         $peminjamanbuku = $query->paginate($perPage)->appends($request->all());
         // dd($peminjamanbuku);
-
         return Inertia::render('anggota/peminjaman/Index', [
             'peminjamanbukuResource' => $peminjamanbuku,
         ]);
