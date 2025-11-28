@@ -13,6 +13,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue';
 import { index, show, store } from '@/routes/peminjamanbukus';
@@ -112,6 +113,38 @@ const handleRequestPinjam = (data_bukus_id: number) => {
         <div class="mx-auto mt-5 max-w-6xl overflow-x-auto">
             <Card class="border-transparent">
                 <CardContent>
+                    <div
+                        class="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center"
+                    >
+                        <div
+                            class="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center"
+                        >
+                            <Input
+                                id="searchQuery"
+                                class="w-full sm:w-64"
+                                v-model="searchQuery"
+                                placeholder="Cari..."
+                            />
+                            <select
+                                id="perPage"
+                                v-model="searchBy"
+                                @change="updatePeminjamanBukus"
+                                class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:ring-2 focus:ring-primary focus:outline-none sm:w-40"
+                            >
+                                <option value="">- Semua Kolom -</option>
+                                <option value="judul_buku">Judul Buku</option>
+                                <option value="penulis_buku">
+                                    Penulis Buku
+                                </option>
+                                <option value="penerbit_buku">
+                                    Penerbit Buku
+                                </option>
+                                <option value="tahun_terbit">
+                                    Tahun Terbit
+                                </option>
+                            </select>
+                        </div>
+                    </div>
                     <DataTable
                         :columns="columns"
                         :data="peminjamanbukuResource.data"

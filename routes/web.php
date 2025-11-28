@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\Admin\DataBukuController;
 use App\Http\Controllers\Api\Anggota\PeminjamanBukuController;
 use App\Http\Controllers\Api\Admin\PengajuanPeminjaman;
+use App\Http\Controllers\Api\Admin\StatusPeminjaman;
 use App\Http\Controllers\PreviewController;
 use App\Http\Controllers\SelectCategory;
 use Illuminate\Support\Facades\Gate;
@@ -61,6 +62,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('categories', CategoryController::class);
         Route::resource('databukus', DataBukuController::class);
         Route::resource('pengajuanpeminjamans', PengajuanPeminjaman::class);
+        Route::resource('statuspeminjamans', StatusPeminjaman::class);
     });
     Route::group(['middleware' => ['auth', 'verified', 'can:anggota']], function () {
         Route::resource('peminjamanbukus', PeminjamanBukuController::class);

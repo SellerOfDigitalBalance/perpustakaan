@@ -77,7 +77,6 @@ const handleSortClick = (key: string) => {
                 </TableHead>
             </TableRow>
         </TableHeader>
-
         <TableBody
             ><TableRow
                 v-for="(item, i) in data"
@@ -87,9 +86,8 @@ const handleSortClick = (key: string) => {
                 <TableCell
                     v-for="col in columns"
                     :key="col.key"
-                    class="whitespace-nowrap"
+                    class="whitespace-normal"
                 >
-                    <!-- Default cell -->
                     <slot
                         :name="col.key"
                         :item="item"
@@ -101,7 +99,6 @@ const handleSortClick = (key: string) => {
                     </slot>
                 </TableCell>
             </TableRow>
-
             <TableRow v-if="!data.length">
                 <TableCell
                     :colspan="columns.length"

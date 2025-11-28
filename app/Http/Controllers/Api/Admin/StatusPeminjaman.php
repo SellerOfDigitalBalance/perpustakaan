@@ -3,23 +3,19 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\DataBukuResource;
 use App\Http\Resources\PeminjamanBukuResource;
 use App\Models\PeminjamanBuku;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class PengajuanPeminjaman extends Controller
+class StatusPeminjaman extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $query = PeminjamanBuku::with('users', 'databukus')
-            ->whereHas('databukus', function ($q) {
-                $q->where('status', '!=', 'dipinjam');
-            });
+        $query = PeminjamanBuku::with('users', 'databukus');
         if ($request->search) {
             $search = strtolower($request->search);
             $column = $request->column;
@@ -75,10 +71,10 @@ class PengajuanPeminjaman extends Controller
             $query->latest();
         }
         $perPage = request()->get('per_page', 8);
-        $PengajuanPeminjamanResource = $query->paginate($perPage)->appends($request->all());
-        // dd($PengajuanPeminjamanResource);
-        return Inertia::render('admin/pengajuanpeminjaman/Index', [
-            'PengajuanPeminjamanResource' => $PengajuanPeminjamanResource,
+        $StatusPeminjamanResource = $query->paginate($perPage)->appends($request->all());
+        // dd($StatusPeminjamanResource);
+        return Inertia::render('admin/statuspeminjaman/Index', [
+            'StatusPeminjamanResource' => $StatusPeminjamanResource,
             'filters' => $request->only('search', 'column', 'sortColumn', 'order')
         ]);
     }
@@ -96,22 +92,18 @@ class PengajuanPeminjaman extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'status' => 'string|required',
-        ]);
-        PeminjamanBuku::where('id', $request->id)->update($validated);
-        return redirect()->back()->with('message', 'Status Pengajuan Peminjaman Berhasil Diterima');
+        //
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(PeminjamanBuku $pengajuanpeminjaman)
+    public function show(PeminjamanBuku $statuspeminjaman)
     {
-        $pengajuanpeminjaman->load(['users', 'databukus']);
-        // dd($pengajuanpeminjaman);
-        return Inertia::render('admin/pengajuanpeminjaman/Show', [
-            'currentPengajuan' => new PeminjamanBukuResource($pengajuanpeminjaman),
+        $statuspeminjaman->load(['users', 'databukus']);
+        // dd($statuspeminjaman);
+        return Inertia::render('admin/statuspeminjaman/Show', [
+            'currentStatus' => new PeminjamanBukuResource($statuspeminjaman),
         ]);
     }
 

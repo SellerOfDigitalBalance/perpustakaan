@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class DataBuku extends Model
 {
+    use HasFactory, Notifiable;
+
     protected $table = 'data_bukus';
 
     protected $fillable = [
