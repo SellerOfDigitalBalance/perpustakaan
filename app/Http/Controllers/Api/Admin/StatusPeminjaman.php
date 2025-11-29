@@ -48,6 +48,10 @@ class StatusPeminjaman extends Controller
                 });
             }
         }
+        if ($request->status) {
+            $status = $request->status;
+            $query->where('status', $status);
+        }
         if ($request->has('sortColumn') && $request->has('order')) {
             $sortColumn = $request->input('sortColumn');
             $order = $request->input('order');
@@ -75,7 +79,7 @@ class StatusPeminjaman extends Controller
         // dd($StatusPeminjamanResource);
         return Inertia::render('admin/statuspeminjaman/Index', [
             'StatusPeminjamanResource' => $StatusPeminjamanResource,
-            'filters' => $request->only('search', 'column', 'sortColumn', 'order')
+            'filters' => $request->only('search', 'column', 'sortColumn', 'order', 'status')
         ]);
     }
 

@@ -37,6 +37,9 @@ class UserController extends Controller
                 });
             }
         }
+        if ($request->level) {
+            $query->where('level', $request->input('level'));
+        }
         // SortColumn $ Order
         if ($request->has('sortColumn') && $request->has('order')) {
             $query->orderBy($request->input('sortColumn'), $request->input('order'));
@@ -48,7 +51,7 @@ class UserController extends Controller
         $userResource = $query->paginate($perPage)->appends($request->all());
         return Inertia::render('admin/user/Index', [
             'userResource' => $userResource,
-            'filters' => $request->only('search', 'column', 'sortColumn', 'order')
+            'filters' => $request->only('search', 'column', 'sortColumn', 'order', 'level'),
         ]);
     }
 
@@ -123,9 +126,12 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $user)
     {
-        //
+        // dd($user);
+        return Inertia::render('admin/user/Show', [
+            'currentUser' => $user,
+        ]);
     }
 
     /**
