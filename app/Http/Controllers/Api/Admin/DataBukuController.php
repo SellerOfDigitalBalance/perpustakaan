@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DataBukuResource;
+use App\Models\Category;
 use App\Models\DataBuku;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -32,10 +33,19 @@ class DataBukuController extends Controller
                 });
             }
         }
+        if ($request->category) {
+            $query->where('categories_id', $request->category);
+        }
+        if ($request->has('sortColumn') && $request->has('order')) {
+            $query->orderBy($request->input('sortColumn'), $request->input('order'));
+        } else {
+            $query->latest();
+        }
         $perPage = request()->get('per_page', 8);
         $dataBuku = $query->paginate($perPage)->appends($request->all());
         return Inertia::render('admin/dataBuku/Index', [
             'dataBukuResource' => $dataBuku,
+            'all_category_names' => Category::pluck('name')->toArray(),
         ]);
     }
 

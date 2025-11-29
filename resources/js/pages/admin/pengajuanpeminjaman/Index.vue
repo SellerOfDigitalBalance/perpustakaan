@@ -14,6 +14,11 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { index, show, store } from '@/routes/pengajuanpeminjamans';
 import {
@@ -83,13 +88,18 @@ watchDebounced(
     },
     { debounce: 500 },
 );
+function resetFilters() {
+    searchQuery.value = '';
+    searchBy.value = '';
+    updatepengajuanpeminjamans();
+}
 const columns = [
     { key: 'no', label: 'No' },
     { key: 'users_id', label: 'Nama Anggota', sortable: true },
     { key: 'kode_transaksi', label: 'Kode Transaksi', sortable: true },
     { key: 'data_bukus_id', label: 'Judul Buku', sortable: true },
     // { key: 'tanggal_peminjaman', label: 'Tanggal Peminjaman', sortable: true },
-    { key: 'status', label: 'status', sortable: true },
+    // { key: 'status', label: 'status', sortable: true },
     // { key: 'catatan', label: 'catatan', sortable: true },
     { key: 'actions', label: 'Aksi' },
 ];
@@ -119,9 +129,7 @@ const handleTerimaPengajuan = (id: number) => {
                     <div
                         class="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center"
                     >
-                        <div
-                            class="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center"
-                        >
+                        <div class="flex items-end gap-2">
                             <Input
                                 id="searchQuery"
                                 class="w-full sm:w-64"
@@ -144,6 +152,43 @@ const handleTerimaPengajuan = (id: number) => {
                                 </option>
                             </select>
                         </div>
+                        <Popover>
+                            <PopoverTrigger
+                                ><Button
+                                    variant="outline"
+                                    class="flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="18"
+                                        height="18"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="lucide lucide-funnel"
+                                    >
+                                        <path
+                                            d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"
+                                        />
+                                    </svg> </Button
+                            ></PopoverTrigger>
+                            <PopoverContent
+                                ><div class="flex flex-col">
+                                    <div class="mt-2 flex flex-col">
+                                        <Button
+                                            type="button"
+                                            class="rounded bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-700"
+                                            @click="resetFilters"
+                                        >
+                                            Reset Filter
+                                        </Button>
+                                    </div>
+                                </div></PopoverContent
+                            >
+                        </Popover>
                     </div>
                     <DataTable
                         :columns="columns"
