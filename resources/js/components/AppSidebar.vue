@@ -14,11 +14,19 @@ import { dashboard } from '@/routes';
 import { index as IndexCategories } from '@/routes/categories';
 import { index as IndexBook } from '@/routes/databukus';
 import { index as IndexPeminjaman } from '@/routes/peminjamanbukus';
+import { index as IndexPengajuanAnngotas } from '@/routes/pengajuananggotas';
 import { index as IndexPengajuanPeminjaman } from '@/routes/pengajuanpeminjamans';
-import { index as IndexStatusPeminjamans } from '@/routes/statuspeminjamans/index';
+import { index as IndexStatusPeminjamans } from '@/routes/statuspeminjamans';
 import { index as IndexUser } from '@/routes/users';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Folders, LayoutGrid, User } from 'lucide-vue-next';
+import {
+    Book,
+    BookMarked,
+    Folders,
+    LayoutGrid,
+    LibraryBig,
+    User,
+} from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
@@ -50,7 +58,7 @@ const adminNavItems: NavGroup[] = [
                 href: IndexCategories(),
                 icon: Folders,
             },
-            { title: 'Data Buku', href: IndexBook(), icon: BookOpen },
+            { title: 'Data Buku', href: IndexBook(), icon: Book },
         ],
     },
     {
@@ -59,12 +67,12 @@ const adminNavItems: NavGroup[] = [
             {
                 title: 'Pengajuan Peminjaman',
                 href: IndexPengajuanPeminjaman(),
-                icon: BookOpen,
+                icon: BookMarked,
             },
             {
                 title: 'Status Peminjaman Buku',
                 href: IndexStatusPeminjamans(),
-                icon: BookOpen,
+                icon: LibraryBig,
             },
         ],
     },
@@ -81,13 +89,13 @@ const anggotaNavItems: NavGroup[] = [
             {
                 title: 'Peminjaman Buku',
                 href: IndexPeminjaman(),
-                icon: BookOpen,
+                icon: Book,
             },
-            // {
-            //     title: 'Daftar Pengajuan Peminjaman',
-            //     href: IndexPeminjaman(),
-            //     icon: BookOpen,
-            // },
+            {
+                title: 'Pengajuan Saya',
+                href: IndexPengajuanAnngotas(),
+                icon: BookMarked,
+            },
             // {
             //     title: 'Riwayat Peminjaman',
             //     href: IndexPeminjaman(),

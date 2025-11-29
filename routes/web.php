@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Admin\DataBukuController;
 use App\Http\Controllers\Api\Anggota\PeminjamanBukuController;
 use App\Http\Controllers\Api\Admin\PengajuanPeminjaman;
 use App\Http\Controllers\Api\Admin\StatusPeminjaman;
+use App\Http\Controllers\Api\Anggota\PengajuanSayaController;
 use App\Http\Controllers\PreviewController;
 use App\Http\Controllers\SelectCategory;
 use Illuminate\Support\Facades\Gate;
@@ -66,6 +67,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
     Route::group(['middleware' => ['auth', 'verified', 'can:anggota']], function () {
         Route::resource('peminjamanbukus', PeminjamanBukuController::class);
+        Route::resource('pengajuananggotas', PengajuanSayaController::class);
     });
 });
 
