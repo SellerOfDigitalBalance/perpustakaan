@@ -18,7 +18,7 @@ class PengajuanPeminjaman extends Controller
     {
         $query = PeminjamanBuku::with('users', 'databukus')
             ->whereHas('databukus', function ($q) {
-                $q->where('status', '!=', 'dipinjam');
+                $q->where('status', 'pending');
             });
         if ($request->search) {
             $search = strtolower($request->search);
@@ -97,11 +97,13 @@ class PengajuanPeminjaman extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'status' => 'string|required',
+            'status' => 'required',
         ]);
+        // dd($validated);
         PeminjamanBuku::where('id', $request->id)->update($validated);
         return redirect()->back()->with('message', 'Status Pengajuan Peminjaman Berhasil Diterima');
     }
+
 
     /**
      * Display the specified resource.
@@ -128,7 +130,11 @@ class PengajuanPeminjaman extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'status' => 'string|required',
+        ]);
+        PeminjamanBuku::where('id', $request->id)->update($validated);
+        return redirect()->back()->with('message', 'Status Pengajuan Peminjaman Berhasil Diterima');
     }
 
     /**

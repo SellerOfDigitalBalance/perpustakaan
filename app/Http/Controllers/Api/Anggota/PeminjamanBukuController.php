@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Anggota;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DataBukuResource;
 use App\Http\Resources\PeminjamanBukuResource;
+use App\Models\Category;
 use App\Models\DataBuku;
 use App\Models\PeminjamanBuku;
 use Illuminate\Http\Request;
@@ -36,6 +37,12 @@ class PeminjamanBukuController extends Controller
                 });
             }
         }
+        // dd($request->category);
+        if ($request->category) {
+            $query->whereHas('category', function ($q) use ($request) {
+                $q->where('name', $request->category);
+            });
+        }
         if ($request->has('sortColumn') && $request->has('order')) {
             $sortColumn = $request->input('sortColumn');
             $order = $request->input('order');
@@ -61,6 +68,8 @@ class PeminjamanBukuController extends Controller
         // dd($peminjamanbuku);
         return Inertia::render('anggota/peminjaman/Index', [
             'peminjamanbukuResource' => $peminjamanbuku,
+            'all_category_names' => Category::pluck('name')->toArray(),
+            'filters' => $request->only('search', 'column', 'sortColumn', 'order', 'category'),
         ]);
     }
 

@@ -109,9 +109,7 @@ const columns = [
                     <div
                         class="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center"
                     >
-                        <div
-                            class="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center"
-                        >
+                        <div class="flex items-end gap-2">
                             <Input
                                 id="searchQuery"
                                 class="w-full sm:w-64"

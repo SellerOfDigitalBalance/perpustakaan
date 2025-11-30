@@ -16,10 +16,7 @@ class PengajuanSayaController extends Controller
     public function index(Request $request)
     {
         $query = PeminjamanBuku::with('databukus')
-            ->where('users_id', auth()->id()) // Hanya data anggota yang sedang login
-            ->whereHas('databukus', function ($q) {
-                $q->where('status', '!=', 'dipinjam');
-            });
+            ->where('users_id', auth()->id()); // Hanya data anggota yang sedang login
         if ($request->search) {
             $search = strtolower($request->search);
             $column = $request->column;
@@ -46,6 +43,12 @@ class PengajuanSayaController extends Controller
                 });
             }
         }
+        if ($request->status) {
+            $status = $request->status;
+            $query->whereHas('databukus', function ($q) use ($status) {
+                $q->where('status', $status);
+            });
+        }
         if ($request->has('sortColumn') && $request->has('order')) {
             $sortColumn = $request->input('sortColumn');
             $order = $request->input('order');
@@ -67,7 +70,7 @@ class PengajuanSayaController extends Controller
         // dd($PengajuanAnngota);
         return Inertia::render('anggota/pengajuansaya/Index', [
             'PengajuanAnngotaResource' => $PengajuanAnngota,
-            'filters' => $request->only('search', 'column', 'sortColumn', 'order')
+            'filters' => $request->only('search', 'column', 'sortColumn', 'order', 'status')
         ]);
     }
     public function show(PeminjamanBuku $pengajuananggota)

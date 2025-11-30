@@ -14,6 +14,12 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { destroy, index, show } from '@/routes/pengajuananggotas';
 import {
@@ -46,6 +52,7 @@ const pageProps = computed(() => {
             search?: string;
             sortColumn?: string;
             order?: 'asc' | 'desc';
+            status?: string;
         }) || {}
     );
 });
@@ -53,6 +60,7 @@ const searchQuery = ref(pageProps.value.search ?? '');
 const searchBy = ref('');
 const selectedSort = ref(pageProps.value.sortColumn ?? 'created_at');
 const sortOrder = ref<'asc' | 'desc'>(pageProps.value.order ?? 'asc');
+const statusSearch = ref(pageProps.value.status ?? '');
 const updatepengajuananggotas = () => {
     router.get(
         '/pengajuananggotas',
@@ -61,6 +69,7 @@ const updatepengajuananggotas = () => {
             sortColumn: selectedSort.value,
             order: sortOrder.value,
             column: searchBy.value,
+            status: statusSearch.value,
         },
         { preserveState: true },
     );
@@ -75,7 +84,7 @@ function toggleSort(key: string) {
     updatepengajuananggotas();
 }
 watchDebounced(
-    [searchQuery],
+    [searchQuery, statusSearch],
     (newQuery, oldQuery) => {
         if (newQuery !== oldQuery) {
             updatepengajuananggotas();
@@ -83,6 +92,12 @@ watchDebounced(
     },
     { debounce: 500 },
 );
+const resetFilters = () => {
+    searchQuery.value = '';
+    statusSearch.value = '';
+    searchBy.value = '';
+    updatepengajuananggotas();
+};
 const columns = [
     { key: 'no', label: 'No' },
     { key: 'kode_transaksi', label: 'Kode Transaksi', sortable: true },
@@ -113,9 +128,7 @@ const handleBatalkanPengajuan = (id: number) => {
                     <div
                         class="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center"
                     >
-                        <div
-                            class="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center"
-                        >
+                        <div class="flex items-end gap-2">
                             <Input
                                 id="searchQuery"
                                 class="w-full sm:w-64"
@@ -138,6 +151,66 @@ const handleBatalkanPengajuan = (id: number) => {
                                 </option>
                             </select>
                         </div>
+                        <Popover>
+                            <PopoverTrigger
+                                ><Button
+                                    variant="outline"
+                                    class="flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="18"
+                                        height="18"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="lucide lucide-funnel"
+                                    >
+                                        <path
+                                            d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"
+                                        />
+                                    </svg> </Button
+                            ></PopoverTrigger>
+                            <PopoverContent
+                                ><div class="flex flex-col">
+                                    <Label for="statusSearch" class="mb-2"
+                                        >Status</Label
+                                    >
+                                    <select
+                                        id="statusSearch"
+                                        v-model="statusSearch"
+                                        class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                                    >
+                                        <option value="">
+                                            -- Semua category --
+                                        </option>
+                                        <option value="dipinjam">
+                                            Dipinjam
+                                        </option>
+                                        <option value="terlambat">
+                                            Terlambat
+                                        </option>
+                                        <option value="hilang">Hilang</option>
+                                        <option value="dikembalikan">
+                                            Dikembalikan
+                                        </option>
+                                        <option value="pending">Pending</option>
+                                    </select>
+                                    <div class="mt-2 flex flex-col">
+                                        <Button
+                                            type="button"
+                                            class="rounded bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-700"
+                                            @click="resetFilters"
+                                        >
+                                            Reset Filter
+                                        </Button>
+                                    </div>
+                                </div></PopoverContent
+                            >
+                        </Popover>
                     </div>
                     <DataTable
                         :columns="columns"
