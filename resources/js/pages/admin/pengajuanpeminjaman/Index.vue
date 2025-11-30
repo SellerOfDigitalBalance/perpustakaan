@@ -104,17 +104,26 @@ const columns = [
     { key: 'actions', label: 'Aksi' },
 ];
 const isOpen = ref<Record<number, boolean>>({});
-const handleTerimaPengajuan = (id: number) => {
+const isOpenBatal = ref<Record<number, boolean>>({});
+
+const handleUpdateStatus = (id: number, type: 'terima' | 'batal') => {
+    const status = type === 'terima' ? 'dipinjam' : 'dibatalkan';
+
     router.post(
         store().url,
         {
             id: id,
-            status: 'dipinjam',
+            status: status,
         },
         {
             onSuccess: () => {
-                isOpen.value[id] = false;
-                console.log('Status berhasil diperbarui menjadi dipinjam.');
+                if (type === 'terima') {
+                    isOpen.value[id] = false;
+                } else {
+                    isOpenBatal.value[id] = false;
+                }
+
+                console.log(`Status berhasil diperbarui menjadi ${status}.`);
             },
         },
     );
@@ -279,12 +288,89 @@ const handleTerimaPengajuan = (id: number) => {
                                             <Button
                                                 variant="destructive"
                                                 @click="
-                                                    handleTerimaPengajuan(
+                                                    handleUpdateStatus(
                                                         pengajuanpeminjamans.id,
+                                                        'terima',
                                                     )
                                                 "
                                             >
                                                 Terima Pengajuan
+                                            </Button>
+
+                                            <DialogClose as-child>
+                                                <Button
+                                                    type="button"
+                                                    variant="secondary"
+                                                >
+                                                    Batal
+                                                </Button>
+                                            </DialogClose>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
+                                <Dialog
+                                    v-model:open="
+                                        isOpenBatal[pengajuanpeminjamans.id]
+                                    "
+                                    :key="'batal-' + pengajuanpeminjamans.id"
+                                >
+                                    <DialogTrigger as-child>
+                                        <Button
+                                            variant="secondary"
+                                            size="icon"
+                                            class="w-full sm:w-20"
+                                        >
+                                            Batalkan
+                                        </Button>
+                                    </DialogTrigger>
+
+                                    <DialogContent class="sm:max-w-xl">
+                                        <DialogHeader>
+                                            <DialogTitle>
+                                                Konfirmasi Pembatalan Pengajuan
+                                                Peminjaman Buku
+                                            </DialogTitle>
+
+                                            <h1 class="mt-2">
+                                                Pengajuan oleh:<br />
+                                                <strong>
+                                                    {{
+                                                        pengajuanpeminjamans
+                                                            .users?.name
+                                                    }}
+                                                </strong>
+                                            </h1>
+
+                                            <h1 class="mt-2">
+                                                Judul buku:<br />
+                                                <strong>
+                                                    {{
+                                                        pengajuanpeminjamans
+                                                            .databukus
+                                                            ?.judul_buku
+                                                    }}
+                                                </strong>
+                                            </h1>
+
+                                            <DialogDescription>
+                                                Apakah Anda yakin ingin
+                                                membatalkan pengajuan ini?
+                                                Setelah dibatalkan, pengajuan
+                                                tidak dapat dikembalikan lagi.
+                                            </DialogDescription>
+                                        </DialogHeader>
+
+                                        <DialogFooter class="gap-2">
+                                            <Button
+                                                variant="destructive"
+                                                @click="
+                                                    handleUpdateStatus(
+                                                        pengajuanpeminjamans.id,
+                                                        'batal',
+                                                    )
+                                                "
+                                            >
+                                                Batalkan Pengajuan
                                             </Button>
 
                                             <DialogClose as-child>
