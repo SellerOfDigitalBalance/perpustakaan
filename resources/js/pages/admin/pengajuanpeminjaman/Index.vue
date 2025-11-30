@@ -114,6 +114,16 @@ const handleUpdateStatus = (id: number, type: 'terima' | 'batal') => {
         {
             id: id,
             status: status,
+            tanggal_peminjaman:
+                type === 'terima'
+                    ? new Date().toISOString().split('T')[0]
+                    : null,
+            tanggal_jatuh_tempo:
+                type === 'terima'
+                    ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                          .toISOString()
+                          .split('T')[0]
+                    : null,
         },
         {
             onSuccess: () => {

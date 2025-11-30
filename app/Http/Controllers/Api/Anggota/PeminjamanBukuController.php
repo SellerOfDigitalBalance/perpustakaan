@@ -95,8 +95,8 @@ class PeminjamanBukuController extends Controller
             'kode_transaksi' => 'TRX-' . strtoupper(Str::random(8)), // kode unik
             'data_bukus_id' => $validated['data_bukus_id'],
 
-            'tanggal_peminjaman' => now(),
-            'tanggal_jatuh_tempo' => now()->addDays(7), // +7 hari, bisa diganti
+            'tanggal_peminjaman' => null,
+            'tanggal_jatuh_tempo' => null, // +7 hari, bisa diganti
 
             'status' => 'pending', // menunggu persetujuan admin
             'tanggal_pengembalian' => null,
