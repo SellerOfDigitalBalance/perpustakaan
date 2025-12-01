@@ -13,6 +13,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import FlashMessage from '@/components/ui/flash/FlashMessage.vue';
 import { Input } from '@/components/ui/input';
 import {
     Popover,
@@ -106,14 +107,20 @@ const columns = [
 const isOpen = ref<Record<number, boolean>>({});
 const isOpenBatal = ref<Record<number, boolean>>({});
 
+import { flashStore } from '@/Stores/flash';
+
 const handleUpdateStatus = (id: number, type: 'terima' | 'batal') => {
     const status = type === 'terima' ? 'dipinjam' : 'dibatalkan';
+    const message =
+        type === 'terima'
+            ? 'Peminjaman berhasil diterima.'
+            : 'Peminjaman berhasil dibatalkan.';
 
     router.post(
         store().url,
         {
-            id: id,
-            status: status,
+            id,
+            status,
             tanggal_peminjaman:
                 type === 'terima'
                     ? new Date().toISOString().split('T')[0]
@@ -133,7 +140,8 @@ const handleUpdateStatus = (id: number, type: 'terima' | 'batal') => {
                     isOpenBatal.value[id] = false;
                 }
 
-                console.log(`Status berhasil diperbarui menjadi ${status}.`);
+                // ⬅️ Kirim flash message ke store
+                flashStore.setMessage(message);
             },
         },
     );
@@ -143,6 +151,7 @@ const handleUpdateStatus = (id: number, type: 'terima' | 'batal') => {
     <Head title="Peminjaman Buku" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="mx-auto mt-5 max-w-6xl overflow-x-auto">
+            <FlashMessage />
             <Card class="border-transparent">
                 <CardContent>
                     <div

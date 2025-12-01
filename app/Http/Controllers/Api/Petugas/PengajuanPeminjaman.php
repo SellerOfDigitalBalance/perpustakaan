@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Admin;
+namespace App\Http\Controllers\Api\petugas;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DataBukuResource;
@@ -77,7 +77,7 @@ class PengajuanPeminjaman extends Controller
         $perPage = request()->get('per_page', 8);
         $PengajuanPeminjamanResource = $query->paginate($perPage)->appends($request->all());
         // dd($PengajuanPeminjamanResource);
-        return Inertia::render('admin/pengajuanpeminjaman/Index', [
+        return Inertia::render('petugas/pengajuanpeminjaman/Index', [
             'PengajuanPeminjamanResource' => $PengajuanPeminjamanResource,
             'filters' => $request->only('search', 'column', 'sortColumn', 'order')
         ]);
@@ -101,7 +101,7 @@ class PengajuanPeminjaman extends Controller
         ]);
         // dd($validated);
         PeminjamanBuku::where('id', $request->id)->update($validated);
-        return redirect()->back()->with('message', 'Status Pengajuan Peminjaman Berhasil Diterima');
+        return redirect()->back()->with('success', 'Pengajuan Peminjaman Berhasil Diterima');
     }
 
 
@@ -112,7 +112,7 @@ class PengajuanPeminjaman extends Controller
     {
         $pengajuanpeminjaman->load(['users', 'databukus']);
         // dd($pengajuanpeminjaman);
-        return Inertia::render('admin/pengajuanpeminjaman/Show', [
+        return Inertia::render('petugas/pengajuanpeminjaman/Show', [
             'currentPengajuan' => new PeminjamanBukuResource($pengajuanpeminjaman),
         ]);
     }

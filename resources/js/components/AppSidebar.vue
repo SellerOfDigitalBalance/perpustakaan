@@ -105,6 +105,39 @@ const anggotaNavItems: NavGroup[] = [
     },
 ];
 
+const petugasuNavItems: NavGroup[] = [
+    {
+        label: 'Umum',
+        items: [{ title: 'Beranda', href: dashboard(), icon: LayoutGrid }],
+    },
+    {
+        label: 'Data Master',
+        items: [
+            {
+                title: 'Kategori Buku',
+                href: IndexCategories(),
+                icon: Folders,
+            },
+            { title: 'Data Buku', href: IndexBook(), icon: Book },
+        ],
+    },
+    {
+        label: 'Transaksi',
+        items: [
+            {
+                title: 'Pengajuan Peminjaman',
+                href: IndexPengajuanPeminjaman(),
+                icon: BookMarked,
+            },
+            {
+                title: 'Status Peminjaman Buku',
+                href: IndexStatusPeminjamans(),
+                icon: LibraryBig,
+            },
+        ],
+    },
+];
+
 // const footerNavItems: NavItem[] = [
 //     {
 //         title: 'Github Repo',
@@ -123,8 +156,8 @@ const mainNavItems = computed(() => {
         return adminNavItems;
     } else if (user.level === 'anggota') {
         return anggotaNavItems;
-        // } else if (user.level === 'guru') {
-        //     return guruNavItems;
+    } else if (user.level === 'petugas') {
+        return petugasuNavItems;
         // } else if (user.level === 'karyawan') {
         //     return karyawanNavItems;
     } else {
