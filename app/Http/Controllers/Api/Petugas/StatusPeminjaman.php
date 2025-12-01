@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Admin;
+namespace App\Http\Controllers\Api\Petugas;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PeminjamanBukuResource;
@@ -77,7 +77,7 @@ class StatusPeminjaman extends Controller
         $perPage = request()->get('per_page', 8);
         $StatusPeminjamanResource = $query->paginate($perPage)->appends($request->all());
         // dd($StatusPeminjamanResource);
-        return Inertia::render('admin/statuspeminjaman/Index', [
+        return Inertia::render('petugas/statuspeminjaman/Index', [
             'StatusPeminjamanResource' => $StatusPeminjamanResource,
             'filters' => $request->only('search', 'column', 'sortColumn', 'order', 'status')
         ]);
@@ -106,7 +106,7 @@ class StatusPeminjaman extends Controller
     {
         $statuspeminjaman->load(['users', 'databukus']);
         // dd($statuspeminjaman);
-        return Inertia::render('admin/statuspeminjaman/Show', [
+        return Inertia::render('petugas/statuspeminjaman/Show', [
             'currentStatus' => new PeminjamanBukuResource($statuspeminjaman),
         ]);
     }

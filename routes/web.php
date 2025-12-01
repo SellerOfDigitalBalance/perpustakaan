@@ -4,8 +4,8 @@ use App\Http\Controllers\Api\Admin\CategoryController;
 use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\Admin\DataBukuController;
 use App\Http\Controllers\Api\Anggota\PeminjamanBukuController;
-use App\Http\Controllers\Api\Admin\PengajuanPeminjaman;
-use App\Http\Controllers\Api\Admin\StatusPeminjaman;
+use App\Http\Controllers\Api\Petugas\PengajuanPeminjaman;
+use App\Http\Controllers\Api\Petugas\StatusPeminjaman;
 use App\Http\Controllers\Api\Anggota\PengajuanSayaController;
 use App\Http\Controllers\PreviewController;
 use App\Http\Controllers\SelectCategory;
@@ -55,19 +55,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Gate::define('anggota', function ($user) {
         return $user->level === 'anggota';
     });
+    Gate::define('petugas', function ($user) {
+        return $user->level === 'petugas';
+    });
+    Gate::define('petugasadmin', function ($user) {
+        return in_array($user->level, ['petugas', 'admin']);
+    });
 
     Route::get('/api/categories', [SelectCategory::class, 'index']);
     Route::put('/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.resetPassword');
+
     Route::group(['middleware' => ['auth', 'verified', 'can:admin']], function () {
         Route::resource('users', UserController::class);
-        Route::resource('categories', CategoryController::class);
-        Route::resource('databukus', DataBukuController::class);
-        Route::resource('pengajuanpeminjamans', PengajuanPeminjaman::class);
-        Route::resource('statuspeminjamans', StatusPeminjaman::class);
     });
     Route::group(['middleware' => ['auth', 'verified', 'can:anggota']], function () {
         Route::resource('peminjamanbukus', PeminjamanBukuController::class);
         Route::resource('pengajuananggotas', PengajuanSayaController::class);
+    });
+    Route::group(['middleware' => ['auth', 'verified', 'can:petugas']], function () {});
+    Route::group(['middleware' => ['auth', 'verified', 'can:petugasadmin']], function () {
+        Route::resource('pengajuanpeminjamans', PengajuanPeminjaman::class);
+        Route::resource('statuspeminjamans', StatusPeminjaman::class);
+        Route::resource('categories', CategoryController::class);
+        Route::resource('databukus', DataBukuController::class);
     });
 });
 
