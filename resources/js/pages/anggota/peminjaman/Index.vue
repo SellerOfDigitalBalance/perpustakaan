@@ -107,6 +107,7 @@ const columns = [
 const isOpen = ref<Record<number, boolean>>({});
 const catatan = ref('');
 const handleRequestPinjam = (data_bukus_id: number) => {
+    console.log(data_bukus_id);
     router.post(
         store().url,
         {

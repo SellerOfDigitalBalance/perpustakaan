@@ -17,6 +17,7 @@ import { index as IndexBook } from '@/routes/databukus';
 import { index as IndexPeminjaman } from '@/routes/peminjamanbukus';
 import { index as IndexPengajuanAnngotas } from '@/routes/pengajuananggotas';
 import { index as IndexPengajuanPeminjaman } from '@/routes/pengajuanpeminjamans';
+import { index as IndexPermintaans } from '@/routes/permintaans';
 import { index as IndexStatusPeminjamans } from '@/routes/statuspeminjamans';
 import { index as IndexUser } from '@/routes/users';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
@@ -75,11 +76,11 @@ const adminNavItems: NavGroup[] = [
                 href: IndexStatusPeminjamans(),
                 icon: LibraryBig,
             },
-            // {
-            //     title: 'Permintaan Perpanjangan Peminjaman',
-            //     href: IndexStatusPeminjamans(),
-            //     icon: LibraryBig,
-            // },
+            {
+                title: 'Permintaan Perpanjangan Peminjaman',
+                href: IndexPermintaans(),
+                icon: LibraryBig,
+            },
             // {
             //     title: 'Riwayat Peminjaman Buku',
             //     href: IndexStatusPeminjamans(),
