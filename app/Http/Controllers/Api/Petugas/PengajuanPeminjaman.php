@@ -103,7 +103,19 @@ class PengajuanPeminjaman extends Controller
         ]);
         // dd($validated);
         PeminjamanBuku::where('id', $request->id)->update($validated);
-        return redirect()->back()->with('success', 'Pengajuan Peminjaman Berhasil Diterima');
+
+
+        // Cek status
+        if ($validated['status'] === 'dipinjam') {
+            return redirect()->back()->with('success', 'Pengajuan Peminjaman Diterima');
+        } else {
+            return redirect()->back() // sesuaikan dengan route kamu
+                ->with('error', 'Pengajuan peminjaman dibatalkan.');
+        }
+
+        // fallback default
+        return redirect()->back()
+            ->with('info', 'Status telah diperbarui.');
     }
 
 
@@ -132,11 +144,11 @@ class PengajuanPeminjaman extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validated = $request->validate([
-            'status' => 'string|required',
-        ]);
-        PeminjamanBuku::where('id', $request->id)->update($validated);
-        return redirect()->back()->with('success', 'Status Pengajuan Peminjaman Berhasil Diterima');
+        // $validated = $request->validate([
+        //     'status' => 'string|required',
+        // ]);
+        // PeminjamanBuku::where('id', $request->id)->update($validated);
+        // return redirect()->back()->with('Error', 'Status Pengajuan Peminjaman Berhasil Dibatalkan');
     }
 
     /**

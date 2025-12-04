@@ -109,7 +109,12 @@ const columns = [
 ];
 
 const isOpen = ref<Record<number, boolean>>({});
-const handleAjukanPerpanjangan = (data_bukus_id: number) => {
+const handleAjukanPerpanjangan = (
+    data_bukus_id: number,
+    pengajuananggotas: number,
+) => {
+    console.log(data_bukus_id);
+
     router.post(
         store().url,
         {
@@ -117,7 +122,7 @@ const handleAjukanPerpanjangan = (data_bukus_id: number) => {
         },
         {
             onSuccess: () => {
-                isOpen.value[data_bukus_id] = false;
+                isOpen.value[pengajuananggotas] = false;
                 console.log('Permintaan pinjam berhasil dikirim ke admin.');
             },
         },
@@ -321,6 +326,7 @@ const handleAjukanPerpanjangan = (data_bukus_id: number) => {
                                                 variant="default"
                                                 @click="
                                                     handleAjukanPerpanjangan(
+                                                        pengajuananggotas.data_bukus_id,
                                                         pengajuananggotas.id,
                                                     )
                                                 "
