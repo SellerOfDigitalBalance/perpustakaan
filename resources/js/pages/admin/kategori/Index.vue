@@ -13,6 +13,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import FlashMessage from '@/components/ui/flash/FlashMessage.vue';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { create, destroy, edit, index } from '@/routes/categories';
@@ -103,6 +104,7 @@ watchDebounced(
     <Head title="Kategoru Buku" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="mx-auto mt-5 max-w-6xl overflow-x-auto">
+            <FlashMessage />
             <Card class="border-transparent">
                 <CardContent>
                     <div

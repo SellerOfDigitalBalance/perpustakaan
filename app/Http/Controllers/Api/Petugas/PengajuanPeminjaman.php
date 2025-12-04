@@ -98,6 +98,8 @@ class PengajuanPeminjaman extends Controller
     {
         $validated = $request->validate([
             'status' => 'required',
+            'tanggal_peminjaman' => 'nullable',
+            'tanggal_jatuh_tempo' => 'nullable',
         ]);
         // dd($validated);
         PeminjamanBuku::where('id', $request->id)->update($validated);
@@ -134,7 +136,7 @@ class PengajuanPeminjaman extends Controller
             'status' => 'string|required',
         ]);
         PeminjamanBuku::where('id', $request->id)->update($validated);
-        return redirect()->back()->with('message', 'Status Pengajuan Peminjaman Berhasil Diterima');
+        return redirect()->back()->with('success', 'Status Pengajuan Peminjaman Berhasil Diterima');
     }
 
     /**

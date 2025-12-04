@@ -107,14 +107,8 @@ const columns = [
 const isOpen = ref<Record<number, boolean>>({});
 const isOpenBatal = ref<Record<number, boolean>>({});
 
-import { flashStore } from '@/Stores/flash';
-
 const handleUpdateStatus = (id: number, type: 'terima' | 'batal') => {
     const status = type === 'terima' ? 'dipinjam' : 'dibatalkan';
-    const message =
-        type === 'terima'
-            ? 'Peminjaman berhasil diterima.'
-            : 'Peminjaman berhasil dibatalkan.';
 
     router.post(
         store().url,
@@ -139,9 +133,6 @@ const handleUpdateStatus = (id: number, type: 'terima' | 'batal') => {
                 } else {
                     isOpenBatal.value[id] = false;
                 }
-
-                // ⬅️ Kirim flash message ke store
-                flashStore.setMessage(message);
             },
         },
     );
@@ -150,8 +141,8 @@ const handleUpdateStatus = (id: number, type: 'terima' | 'batal') => {
 <template>
     <Head title="Peminjaman Buku" />
     <AppLayout :breadcrumbs="breadcrumbs">
+        <FlashMessage />
         <div class="mx-auto mt-5 max-w-6xl overflow-x-auto">
-            <FlashMessage />
             <Card class="border-transparent">
                 <CardContent>
                     <div

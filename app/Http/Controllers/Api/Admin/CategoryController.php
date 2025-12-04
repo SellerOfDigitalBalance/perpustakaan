@@ -51,7 +51,7 @@ class CategoryController extends Controller
         ]);
         category::create($validated);
 
-        return redirect()->route('categories.index')->with('message', 'Kategori Berhasil Ditambahkan');
+        return redirect()->route('categories.index')->with('success', 'Kategori Berhasil Ditambahkan');
     }
 
     /**
@@ -83,7 +83,7 @@ class CategoryController extends Controller
         ]);
         $category->update($validated);
 
-        return redirect()->route('categories.index')->with('message', 'Kategori Berhasil Diperbarui');
+        return redirect()->route('categories.index')->with('success', 'Kategori Berhasil Diperbarui');
     }
 
     /**
@@ -92,6 +92,6 @@ class CategoryController extends Controller
     public function destroy(category $category)
     {
         $category->delete();
-        return redirect()->back()->with('message', 'Kategori Berhasil Dihapus');
+        return redirect()->back()->with('success', 'Kategori Berhasil Dihapus');
     }
 }

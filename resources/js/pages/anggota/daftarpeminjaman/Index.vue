@@ -22,7 +22,7 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { destroy, index, show } from '@/routes/pengajuananggotas';
+import { index, show, store } from '@/routes/daftarpeminjamans';
 import {
     BreadcrumbItem,
     PaginatedResponse,
@@ -30,22 +30,22 @@ import {
 } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { watchDebounced } from '@vueuse/core';
-import { Eye, Trash2 } from 'lucide-vue-next';
+import { Eye } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Pengajuan Saya',
+        title: 'Daftar Peminjaman',
         href: index().url,
     },
 ];
 const props = defineProps<{
-    PengajuanAnngotaResource: PaginatedResponse<PengajuanPeminjaman>;
+    daftarpeminjamanResource: PaginatedResponse<PengajuanPeminjaman>;
 }>();
-console.log(props.PengajuanAnngotaResource);
+console.log(props.daftarpeminjamanResource);
 const pagination = computed(() => ({
-    previous: props.PengajuanAnngotaResource.prev_page_url,
-    next: props.PengajuanAnngotaResource.next_page_url,
+    previous: props.daftarpeminjamanResource.prev_page_url,
+    next: props.daftarpeminjamanResource.next_page_url,
 }));
 const pageProps = computed(() => {
     return (
@@ -62,9 +62,9 @@ const searchBy = ref('');
 const selectedSort = ref(pageProps.value.sortColumn ?? 'created_at');
 const sortOrder = ref<'asc' | 'desc'>(pageProps.value.order ?? 'asc');
 const statusSearch = ref(pageProps.value.status ?? '');
-const updatepengajuananggotas = () => {
+const updatedaftarpeminjaman = () => {
     router.get(
-        '/pengajuananggotas',
+        '/daftarpeminjamans',
         {
             search: searchQuery.value,
             sortColumn: selectedSort.value,
@@ -82,13 +82,13 @@ function toggleSort(key: string) {
         selectedSort.value = key;
         sortOrder.value = 'asc';
     }
-    updatepengajuananggotas();
+    updatedaftarpeminjaman();
 }
 watchDebounced(
     [searchQuery, statusSearch],
     (newQuery, oldQuery) => {
         if (newQuery !== oldQuery) {
-            updatepengajuananggotas();
+            updatedaftarpeminjaman();
         }
     },
     { debounce: 500 },
@@ -97,39 +97,31 @@ const resetFilters = () => {
     searchQuery.value = '';
     statusSearch.value = '';
     searchBy.value = '';
-    updatepengajuananggotas();
+    updatedaftarpeminjaman();
 };
 const columns = [
     { key: 'no', label: 'No' },
-    { key: 'kode_transaksi', label: 'Kode Transaksi', sortable: true },
-    { key: 'data_bukus_id', label: 'Judul Buku', sortable: true },
-    // { key: 'tanggal_peminjaman', label: 'Tanggal Peminjaman', sortable: true },
-    { key: 'status', label: 'status', sortable: true },
-    // { key: 'catatan', label: 'catatan', sortable: true },
-    { key: 'actions', label: 'Aksi' },
+    { key: 'judul_buku', label: 'Judul Buku', sortable: true },
+    { key: 'penulis_buku', label: 'Penulis Buku', sortable: true },
+    { key: 'penerbit_buku', label: 'Penerbit Buku', sortable: true },
+    { key: 'jatuh_tempo', label: 'Jatuh Tempo', sortable: true },
+    { key: 'action', label: 'Aksi', sortable: true },
 ];
+
 const isOpen = ref<Record<number, boolean>>({});
-const handleBatalkanPengajuan = (id: number) => {
-    console.log('Button hapus ditekan, isOpen:', isOpen.value);
-
-    router.delete(destroy.url(id), {
-        onSuccess: () => {
-            isOpen.value[id] = false;
-            // Tutup dialog setelah sukses hapus
+const handleAjukanPerpanjangan = (data_bukus_id: number) => {
+    router.post(
+        store().url,
+        {
+            data_bukus_id: data_bukus_id,
         },
-    });
-};
-const isOpenHapus = ref<Record<number, boolean>>({});
-
-const handleDelete = (id: number) => {
-    console.log('Button hapus ditekan, isOpen:', isOpenHapus.value);
-
-    router.delete(destroy.url(id), {
-        onSuccess: () => {
-            isOpen.value[id] = false;
-            // Tutup dialog setelah sukses hapus
+        {
+            onSuccess: () => {
+                isOpen.value[data_bukus_id] = false;
+                console.log('Permintaan pinjam berhasil dikirim ke admin.');
+            },
         },
-    });
+    );
 };
 </script>
 <template>
@@ -152,7 +144,7 @@ const handleDelete = (id: number) => {
                             <select
                                 id="perPage"
                                 v-model="searchBy"
-                                @change="updatepengajuananggotas"
+                                @change="updatedaftarpeminjaman"
                                 class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:ring-2 focus:ring-primary focus:outline-none sm:w-40"
                             >
                                 <option value="">- Semua Kolom -</option>
@@ -228,12 +220,12 @@ const handleDelete = (id: number) => {
                     </div>
                     <DataTable
                         :columns="columns"
-                        :data="PengajuanAnngotaResource.data"
-                        :links="PengajuanAnngotaResource.links"
+                        :data="daftarpeminjamanResource.data"
+                        :links="daftarpeminjamanResource.links"
                         :current_page="
-                            props.PengajuanAnngotaResource.current_page
+                            props.daftarpeminjamanResource.current_page
                         "
-                        :per_page="props.PengajuanAnngotaResource.per_page"
+                        :per_page="props.daftarpeminjamanResource.per_page"
                         :filters="{
                             search: searchQuery,
                             sortColumn: selectedSort,
@@ -244,13 +236,32 @@ const handleDelete = (id: number) => {
                         <template #no="{ i, current_page, per_page }">
                             {{ (current_page - 1) * per_page + i + 1 }}
                         </template>
-                        <template #users_id="{ item }">
-                            {{ item.users?.name || 'Tidak Ada' }}
-                        </template>
-                        <template #data_bukus_id="{ item }">
+                        <template #judul_buku="{ item }">
                             {{ item.databukus?.judul_buku || 'Tidak Ada' }}
                         </template>
-                        <template #actions="{ item: pengajuananggotas }">
+                        <template #penulis_buku="{ item }">
+                            {{ item.databukus?.penulis_buku || 'Tidak Ada' }}
+                        </template>
+                        <template #penerbit_buku="{ item }">
+                            {{ item.databukus?.penerbit_buku || 'Tidak Ada' }}
+                        </template>
+                        <template #jatuh_tempo="{ item }">
+                            {{
+                                Math.ceil(
+                                    (Number(
+                                        new Date(item.tanggal_jatuh_tempo),
+                                    ) -
+                                        Number(
+                                            new Date(item.tanggal_peminjaman),
+                                        )) /
+                                        86400000,
+                                ) + ' hari'
+                            }}
+                        </template>
+                        <template #categories_id="{ item }">
+                            {{ item.databukus?.category?.name || 'Tidak Ada' }}
+                        </template>
+                        <template #action="{ item: pengajuananggotas }">
                             <div class="flex items-center gap-2">
                                 <Link
                                     :href="show(pengajuananggotas.id)"
@@ -262,67 +273,59 @@ const handleDelete = (id: number) => {
                                 </Link>
                                 <Dialog
                                     v-model:open="isOpen[pengajuananggotas.id]"
-                                    :key="'batal-' + pengajuananggotas.id"
-                                    v-if="
-                                        pengajuananggotas.status === 'pending'
-                                    "
+                                    :key="'perpanjang-' + pengajuananggotas.id"
                                 >
                                     <DialogTrigger as-child>
                                         <Button
                                             variant="secondary"
                                             size="icon"
-                                            class="w-full sm:w-20"
+                                            class="w-full sm:w-28"
                                         >
-                                            Batalkan
+                                            Perpanjang
                                         </Button>
                                     </DialogTrigger>
 
                                     <DialogContent class="sm:max-w-xl">
                                         <DialogHeader>
                                             <DialogTitle>
-                                                Konfirmasi Pembatalan Pengajuan
-                                                Peminjaman Buku
+                                                Konfirmasi Pengajuan
+                                                Perpanjangan
                                             </DialogTitle>
 
                                             <h1 class="mt-2">
-                                                Pengajuan oleh:<br />
-                                                <strong>
-                                                    {{
-                                                        pengajuananggotas.users
-                                                            ?.name
-                                                    }}
-                                                </strong>
+                                                Judul Buku:<br />
+                                                <strong>{{
+                                                    pengajuananggotas.databukus
+                                                        ?.judul_buku
+                                                }}</strong>
                                             </h1>
 
                                             <h1 class="mt-2">
-                                                Judul buku:<br />
-                                                <strong>
-                                                    {{
-                                                        pengajuananggotas
-                                                            .databukus
-                                                            ?.judul_buku
-                                                    }}
-                                                </strong>
+                                                Jatuh Tempo Saat Ini:<br />
+                                                <strong>{{
+                                                    pengajuananggotas.tanggal_jatuh_tempo
+                                                }}</strong>
                                             </h1>
 
-                                            <DialogDescription>
-                                                Apakah Anda yakin ingin
-                                                membatalkan pengajuan ini?
-                                                Setelah dibatalkan, pengajuan
-                                                tidak dapat dikembalikan lagi.
+                                            <DialogDescription class="mt-4">
+                                                Anda akan mengajukan
+                                                perpanjangan jatuh tempo untuk
+                                                buku ini. Admin akan menentukan
+                                                tanggal jatuh tempo baru dan
+                                                meninjau permintaan Anda.
                                             </DialogDescription>
                                         </DialogHeader>
 
                                         <DialogFooter class="gap-2">
                                             <Button
-                                                variant="destructive"
+                                                variant="default"
                                                 @click="
-                                                    handleBatalkanPengajuan(
+                                                    handleAjukanPerpanjangan(
                                                         pengajuananggotas.id,
                                                     )
                                                 "
                                             >
-                                                Batalkan Pengajuan
+                                                Ajukan Perpanjangan
                                             </Button>
 
                                             <DialogClose as-child>
@@ -336,52 +339,6 @@ const handleDelete = (id: number) => {
                                         </DialogFooter>
                                     </DialogContent>
                                 </Dialog>
-                                <Dialog
-                                    v-else
-                                    v-model:open="
-                                        isOpenHapus[pengajuananggotas.id]
-                                    "
-                                    :key="pengajuananggotas.id"
-                                >
-                                    <DialogTrigger as-child>
-                                        <Button
-                                            variant="destructive"
-                                            size="icon"
-                                        >
-                                            <Trash2 class="h-4 w-4" />
-                                        </Button>
-                                    </DialogTrigger>
-                                    <DialogContent class="sm:max-w-md">
-                                        <DialogHeader>
-                                            <DialogTitle
-                                                >Konfirmasi Hapus</DialogTitle
-                                            >
-                                            <DialogDescription>
-                                                Apakah Anda yakin ingin
-                                                menghapus pengguna ini?
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <DialogFooter class="gap-2">
-                                            <Button
-                                                variant="destructive"
-                                                @click="
-                                                    handleDelete(
-                                                        pengajuananggotas.id,
-                                                    )
-                                                "
-                                            >
-                                                Hapus
-                                            </Button>
-                                            <DialogClose as-child>
-                                                <Button
-                                                    type="button"
-                                                    variant="secondary"
-                                                    >Batal</Button
-                                                >
-                                            </DialogClose>
-                                        </DialogFooter>
-                                    </DialogContent>
-                                </Dialog>
                             </div>
                         </template>
                     </DataTable>
@@ -391,7 +348,7 @@ const handleDelete = (id: number) => {
         <Pagination
             :previousPage="pagination.previous"
             :nextPage="pagination.next"
-            :links="props.PengajuanAnngotaResource.links"
+            :links="props.daftarpeminjamanResource.links"
         />
     </AppLayout>
 </template>

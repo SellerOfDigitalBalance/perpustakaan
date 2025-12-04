@@ -16,9 +16,11 @@ return new class extends Migration
             $table->foreignId('users_id')->constrained('users')->onDelete('cascade');
             $table->string('kode_transaksi')->unique();
             $table->foreignId('data_bukus_id')->constrained('data_bukus')->onDelete('cascade');
+            $table->date('tanggal_pengajuan')->nullable();
             $table->date('tanggal_peminjaman')->nullable();
             $table->date('tanggal_jatuh_tempo')->nullable();
             $table->enum('status', ['dipinjam', 'dibatalkan', 'terlambat', 'hilang', 'dikembalikan', 'pending'])->default('dipinjam');
+            $table->enum('status_perpanjangan', ['none', 'pending', 'approved', 'rejected'])->default('none');
             $table->date('tanggal_pengembalian')->nullable();
             $table->string('catatan')->nullable();
             $table->timestamps();

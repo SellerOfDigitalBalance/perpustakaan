@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as IndexCategories } from '@/routes/categories';
+import { index as IndexDaftarPeminjaman } from '@/routes/daftarpeminjamans';
 import { index as IndexBook } from '@/routes/databukus';
 import { index as IndexPeminjaman } from '@/routes/peminjamanbukus';
 import { index as IndexPengajuanAnngotas } from '@/routes/pengajuananggotas';
@@ -65,7 +66,7 @@ const adminNavItems: NavGroup[] = [
         label: 'Transaksi',
         items: [
             {
-                title: 'Pengajuan Peminjaman',
+                title: 'Pengajuan Peminjaman Buku',
                 href: IndexPengajuanPeminjaman(),
                 icon: BookMarked,
             },
@@ -74,6 +75,16 @@ const adminNavItems: NavGroup[] = [
                 href: IndexStatusPeminjamans(),
                 icon: LibraryBig,
             },
+            // {
+            //     title: 'Permintaan Perpanjangan Peminjaman',
+            //     href: IndexStatusPeminjamans(),
+            //     icon: LibraryBig,
+            // },
+            // {
+            //     title: 'Riwayat Peminjaman Buku',
+            //     href: IndexStatusPeminjamans(),
+            //     icon: LibraryBig,
+            // },
         ],
     },
 ];
@@ -96,6 +107,16 @@ const anggotaNavItems: NavGroup[] = [
                 href: IndexPengajuanAnngotas(),
                 icon: BookMarked,
             },
+            {
+                title: 'Daftar Peminjaman Buku',
+                href: IndexDaftarPeminjaman(),
+                icon: BookMarked,
+            },
+            // {
+            //     title: 'Pengajuan Perpanjang Peminjaman',
+            //     href: IndexPengajuanAnngotas(),
+            //     icon: BookMarked,
+            // },
             // {
             //     title: 'Riwayat Peminjaman',
             //     href: IndexPeminjaman(),

@@ -13,6 +13,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import FlashMessage from '@/components/ui/flash/FlashMessage.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -132,6 +133,7 @@ const resetFilters = () => {
     <Head title="Peminjaman Buku" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="mx-auto mt-5 max-w-6xl overflow-x-auto">
+            <FlashMessage />
             <Card class="border-transparent">
                 <CardContent>
                     <div
