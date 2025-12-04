@@ -3,6 +3,7 @@ import DataTable from '@/components/DataTable.vue';
 import Pagination from '@/components/tables/Pagination.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import FlashMessage from '@/components/ui/flash/FlashMessage.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -104,6 +105,7 @@ const columns = [
     <Head title="Peminjaman Buku" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="mx-auto mt-5 max-w-6xl overflow-x-auto">
+            <FlashMessage />
             <Card class="border-transparent">
                 <CardContent>
                     <div

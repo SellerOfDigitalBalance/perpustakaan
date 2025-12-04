@@ -16,7 +16,8 @@ class PengajuanSayaController extends Controller
     public function index(Request $request)
     {
         $query = PeminjamanBuku::with('databukus')
-            ->where('users_id', auth()->id()); // Hanya data anggota yang sedang login
+            ->where('users_id', auth()->id()) // Hanya data anggota yang sedang login
+            ->where('status', '!=', 'dipinjam');
         if ($request->search) {
             $search = strtolower($request->search);
             $column = $request->column;
@@ -85,16 +86,16 @@ class PengajuanSayaController extends Controller
     {
         // Pastikan hanya anggota yang membuat pengajuan yang dapat membatalkan
         if ($pengajuananggota->users_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json(['success' => 'Unauthorized'], 403);
         }
 
         // Hanya pengajuan dengan status 'pending' yang dapat dibatalkan
-        if ($pengajuananggota->status !== 'pending') {
-            return response()->json(['message' => 'Only pending requests can be cancelled'], 400);
+        if (in_array($pengajuananggota->status, ['dipinjam', 'selesai'])) {
+            return response()->json(['success' => 'Only pending requests can be cancelled'], 400);
         }
 
         $pengajuananggota->delete();
 
-        return redirect()->back()->with(['message' => 'Pengajuan pembatalan berhasil.']);
+        return redirect()->back()->with(['success' => 'Pengajuan pembatalan berhasil.']);
     }
 }

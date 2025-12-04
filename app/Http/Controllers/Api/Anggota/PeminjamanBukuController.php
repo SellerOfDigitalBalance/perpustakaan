@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Pest\Support\Str;
 
+use function Symfony\Component\Clock\now;
+
 class PeminjamanBukuController extends Controller
 {
     /**
@@ -95,10 +97,12 @@ class PeminjamanBukuController extends Controller
             'kode_transaksi' => 'TRX-' . strtoupper(Str::random(8)), // kode unik
             'data_bukus_id' => $validated['data_bukus_id'],
 
+            'tanggal_pengajuan' => now(),
             'tanggal_peminjaman' => null,
             'tanggal_jatuh_tempo' => null, // +7 hari, bisa diganti
 
             'status' => 'pending', // menunggu persetujuan admin
+            'status_perpanjang' => null,
             'tanggal_pengembalian' => null,
 
             'catatan' => $validated['catatan'] ?? null,

@@ -19,6 +19,7 @@ class PeminjamanBukuResource extends JsonResource
             'users_id' => $this->users_id,
             'data_bukus_id' => $this->data_bukus_id,
             'kode_transaksi' => $this->kode_transaksi,
+            'tanggal_pengajuan' => $this->tanggal_pengajuan,
             'tanggal_peminjaman' => $this->tanggal_peminjaman,
             'tanggal_jatuh_tempo' => $this->tanggal_jatuh_tempo,
             'status' => $this->status,

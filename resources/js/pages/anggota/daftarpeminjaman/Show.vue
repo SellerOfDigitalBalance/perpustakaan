@@ -2,7 +2,7 @@
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
 import ShowData from '@/components/ShowData.vue';
 import { Card, CardContent } from '@/components/ui/card';
-import { index, show } from '@/routes/pengajuananggotas';
+import { index, show } from '@/routes/daftarpeminjamans';
 import { BreadcrumbItem, PengajuanPeminjaman } from '@/types';
 
 const { currentPengajuan } = defineProps<{
@@ -12,11 +12,11 @@ const { currentPengajuan } = defineProps<{
 }>();
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Pengajuan Saya',
+        title: 'Daftar Peminjaman Buku',
         href: index().url,
     },
     {
-        title: 'Detail Pengajuan Saya',
+        title: 'Detail Daftar Peminjaman Buku',
         href: show(currentPengajuan.data.id).url,
     },
 ];
@@ -25,6 +25,12 @@ const columns = [
     { key: 'kode_transaksi', label: 'Kode Transaksi', sortable: true },
     { key: 'data_bukus_id', label: 'judul Buku', sortable: true },
     { key: 'tanggal_pengajuan', label: 'Tanggal Pengajuan', sortable: true },
+    { key: 'tanggal_peminjaman', label: 'Tanggal Peminjaman', sortable: true },
+    {
+        key: 'tanggal_jatuh_tempo',
+        label: 'Tanggal Jatuh Tempo',
+        sortable: true,
+    },
     { key: 'status', label: 'status', sortable: true },
     { key: 'catatan', label: 'catatan', sortable: true },
 ];

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Admin\CategoryController;
 use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\Admin\DataBukuController;
+use App\Http\Controllers\Api\Anggota\DaftarPeminjamanBukuController;
 use App\Http\Controllers\Api\Anggota\PeminjamanBukuController;
 use App\Http\Controllers\Api\Petugas\PengajuanPeminjaman;
 use App\Http\Controllers\Api\Petugas\StatusPeminjaman;
@@ -71,6 +72,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::group(['middleware' => ['auth', 'verified', 'can:anggota']], function () {
         Route::resource('peminjamanbukus', PeminjamanBukuController::class);
         Route::resource('pengajuananggotas', PengajuanSayaController::class);
+        Route::resource('daftarpeminjamans', DaftarPeminjamanBukuController::class);
     });
     Route::group(['middleware' => ['auth', 'verified', 'can:petugas']], function () {});
     Route::group(['middleware' => ['auth', 'verified', 'can:petugasadmin']], function () {
