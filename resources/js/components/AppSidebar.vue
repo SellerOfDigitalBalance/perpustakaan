@@ -17,6 +17,7 @@ import { index as IndexBook } from '@/routes/databukus';
 import { index as IndexPeminjaman } from '@/routes/peminjamanbukus';
 import { index as IndexPengajuanAnngotas } from '@/routes/pengajuananggotas';
 import { index as IndexPengajuanPeminjaman } from '@/routes/pengajuanpeminjamans';
+import { index as IndexPengemablians } from '@/routes/pengembalians';
 import { index as IndexPermintaans } from '@/routes/permintaans';
 import { index as IndexStatusPeminjamans } from '@/routes/statuspeminjamans';
 import { index as IndexUser } from '@/routes/users';
@@ -81,6 +82,11 @@ const adminNavItems: NavGroup[] = [
                 href: IndexPermintaans(),
                 icon: LibraryBig,
             },
+            {
+                title: 'Pengembalian Buku',
+                href: IndexPengemablians(),
+                icon: LibraryBig,
+            },
             // {
             //     title: 'Riwayat Peminjaman Buku',
             //     href: IndexStatusPeminjamans(),
@@ -91,10 +97,10 @@ const adminNavItems: NavGroup[] = [
 ];
 
 const anggotaNavItems: NavGroup[] = [
-    {
-        label: 'Umum',
-        items: [{ title: 'Beranda', href: dashboard(), icon: LayoutGrid }],
-    },
+    // {
+    // label: 'Umum',
+    // items: [{ title: 'Beranda', href: dashboard(), icon: LayoutGrid }],
+    // },
     {
         label: 'Transaksi',
         items: [
@@ -128,10 +134,10 @@ const anggotaNavItems: NavGroup[] = [
 ];
 
 const petugasuNavItems: NavGroup[] = [
-    {
-        label: 'Umum',
-        items: [{ title: 'Beranda', href: dashboard(), icon: LayoutGrid }],
-    },
+    // {
+    //     label: 'Umum',
+    //     items: [{ title: 'Beranda', href: dashboard(), icon: LayoutGrid }],
+    // },
     {
         label: 'Data Master',
         items: [

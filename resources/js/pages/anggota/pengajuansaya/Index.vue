@@ -156,7 +156,6 @@ const handleDelete = (id: number) => {
                                 class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:ring-2 focus:ring-primary focus:outline-none sm:w-40"
                             >
                                 <option value="">- Semua Kolom -</option>
-                                <option value="users_id">Nama Anggota</option>
                                 <option value="kode_transaksi">
                                     Kode Transaksi
                                 </option>

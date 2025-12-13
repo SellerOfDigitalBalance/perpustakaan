@@ -18,6 +18,7 @@ class PeminjamanBuku extends Model
         'status',
         'tanggal_pengembalian',
         'catatan',
+        'denda',
     ];
 
     public function users()

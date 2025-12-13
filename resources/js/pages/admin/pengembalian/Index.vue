@@ -22,7 +22,7 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { index, store } from '@/routes/permintaans';
+import { index, store } from '@/routes/pengembalians';
 import {
     BreadcrumbItem,
     PaginatedResponse,
@@ -34,17 +34,17 @@ import { computed, ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Permintaan Perpanjangan Peminjaman',
+        title: 'Pengembalian Buku',
         href: index().url,
     },
 ];
 const props = defineProps<{
-    permintaanResource: PaginatedResponse<PengajuanPeminjaman>;
+    pengembalianResource: PaginatedResponse<PengajuanPeminjaman>;
 }>();
-console.log(props.permintaanResource);
+console.log(props.pengembalianResource);
 const pagination = computed(() => ({
-    previous: props.permintaanResource.prev_page_url,
-    next: props.permintaanResource.next_page_url,
+    previous: props.pengembalianResource.prev_page_url,
+    next: props.pengembalianResource.next_page_url,
 }));
 const pageProps = computed(() => {
     return (
@@ -59,9 +59,9 @@ const searchQuery = ref(pageProps.value.search ?? '');
 const searchBy = ref('');
 const selectedSort = ref(pageProps.value.sortColumn ?? 'created_at');
 const sortOrder = ref<'asc' | 'desc'>(pageProps.value.order ?? 'asc');
-const updatePermintaans = () => {
+const updatePengembalians = () => {
     router.get(
-        '/permintaans',
+        '/pengembalians',
         {
             search: searchQuery.value,
             sortColumn: selectedSort.value,
@@ -78,38 +78,36 @@ function toggleSort(key: string) {
         selectedSort.value = key;
         sortOrder.value = 'asc';
     }
-    updatePermintaans();
+    updatePengembalians();
 }
 watchDebounced(
     [searchQuery],
     (newQuery, oldQuery) => {
         if (newQuery !== oldQuery) {
-            updatePermintaans();
+            updatePengembalians();
         }
     },
     { debounce: 500 },
 );
 const isOpen = ref<Record<number, boolean>>({});
 const isOpenBatal = ref<Record<number, boolean>>({});
+const now = () => new Date().toISOString(); // Returns current date and time in ISO format
+const handleUpdateStatus = (id: number, type: 'hilang' | 'dikembalikan') => {
+    // Determine the status based on the type
+    const status = type === 'hilang' ? 'hilang' : 'dikembalikan';
 
-const handleUpdateStatus = (id: number, type: 'terima' | 'batal') => {
-    const status_perpanjangan = type === 'terima' ? 'approved' : 'rejected';
-
+    // Send the request to update the status
     router.post(
-        store().url,
+        store().url, // Assuming this provides the endpoint URL
         {
             id,
-            status_perpanjangan,
-            tanggal_jatuh_tempo:
-                type === 'terima'
-                    ? new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)
-                          .toISOString()
-                          .split('T')[0]
-                    : null,
+            status, // Status being updated
+            tanggal_pengembalian: now(), // Current timestamp
         },
         {
             onSuccess: () => {
-                if (type === 'terima') {
+                // Close the modal or perform any other necessary actions based on the type
+                if (type === 'hilang') {
                     isOpen.value[id] = false;
                 } else {
                     isOpenBatal.value[id] = false;
@@ -118,29 +116,25 @@ const handleUpdateStatus = (id: number, type: 'terima' | 'batal') => {
         },
     );
 };
+
 function resetFilters() {
     searchQuery.value = '';
     searchBy.value = '';
 
     // Langsung trigger update
-    updatePermintaans();
+    updatePengembalians();
 }
 const columns = [
     { key: 'no', label: 'No' },
     { key: 'kode_transaksi', label: 'KodeTransaksi', sortable: true },
     { key: 'users_id', label: 'Nama Anggota', sortable: true },
     { key: 'judul_buku', label: 'Judul Buku', sortable: true },
-    {
-        key: 'jatuh_tempo',
-        label: 'Jatuh Tempo',
-        sortable: true,
-    },
     { key: 'actions', label: 'Aksi' },
 ];
 </script>
 
 <template>
-    <Head title="Daftar Pengguna" />
+    <Head title="Pengembalian Buku" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="mx-auto mt-5 max-w-6xl overflow-x-auto">
             <FlashMessage />
@@ -159,7 +153,7 @@ const columns = [
                             <select
                                 id="perPage"
                                 v-model="searchBy"
-                                @change="updatePermintaans"
+                                @change="updatePengembalians"
                                 class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:ring-2 focus:ring-primary focus:outline-none sm:w-40"
                             >
                                 <option value="">- Semua Kolom -</option>
@@ -212,10 +206,10 @@ const columns = [
                     </div>
                     <DataTable
                         :columns="columns"
-                        :data="permintaanResource.data"
-                        :links="permintaanResource.links"
-                        :current_page="props.permintaanResource.current_page"
-                        :per_page="props.permintaanResource.per_page"
+                        :data="pengembalianResource.data"
+                        :links="pengembalianResource.links"
+                        :current_page="props.pengembalianResource.current_page"
+                        :per_page="props.pengembalianResource.per_page"
                         :filters="{
                             search: searchQuery,
                             sortColumn: selectedSort,
@@ -232,24 +226,11 @@ const columns = [
                         <template #judul_buku="{ item }">
                             {{ item.databukus?.judul_buku || 'tidak ada' }}
                         </template>
-                        <template #jatuh_tempo="{ item }">
-                            {{
-                                Math.ceil(
-                                    (Number(
-                                        new Date(item.tanggal_jatuh_tempo),
-                                    ) -
-                                        Number(
-                                            new Date(item.tanggal_peminjaman),
-                                        )) /
-                                        86400000,
-                                ) + ' hari'
-                            }}
-                        </template>
                         <template #actions="{ item: user }">
                             <div class="flex items-center gap-2">
                                 <Dialog
                                     v-model:open="isOpen[user.id]"
-                                    :key="user.id"
+                                    :key="'hilang-' + user.id"
                                 >
                                     <DialogTrigger as-child>
                                         <Button
@@ -257,19 +238,18 @@ const columns = [
                                             size="icon"
                                             class="w-full sm:w-20"
                                         >
-                                            Terima
+                                            Hilang
                                         </Button>
                                     </DialogTrigger>
 
                                     <DialogContent class="sm:max-w-xl">
                                         <DialogHeader>
                                             <DialogTitle>
-                                                Konfirmasi Penerimaan
-                                                Perpanjangan Peminjaman Buku
+                                                Konfirmasi Buku Hilang
                                             </DialogTitle>
 
                                             <h1 class="mt-2">
-                                                Pengajuan oleh:<br />
+                                                Dilaporkan oleh:<br />
                                                 <strong>{{
                                                     user.users?.name
                                                 }}</strong>
@@ -277,20 +257,18 @@ const columns = [
 
                                             <h1 class="mt-2">
                                                 Judul buku:<br />
-                                                <strong>
-                                                    {{
-                                                        user.databukus
-                                                            ?.judul_buku
-                                                    }}
-                                                </strong>
+                                                <strong>{{
+                                                    user.databukus?.judul_buku
+                                                }}</strong>
                                             </h1>
 
                                             <DialogDescription>
-                                                Apakah Anda yakin ingin menerima
-                                                perpanjangan peminjaman buku
-                                                ini? Setelah dikonfirmasi,
-                                                proses akan dilanjutkan ke tahap
-                                                berikutnya.
+                                                Apakah Anda yakin ingin menandai
+                                                buku ini sebagai
+                                                <strong>hilang</strong>? Setelah
+                                                dikonfirmasi, status tidak dapat
+                                                diubah dan mungkin memerlukan
+                                                tindakan lanjutan.
                                             </DialogDescription>
                                         </DialogHeader>
 
@@ -300,11 +278,11 @@ const columns = [
                                                 @click="
                                                     handleUpdateStatus(
                                                         user.id,
-                                                        'terima',
+                                                        'hilang',
                                                     )
                                                 "
                                             >
-                                                Terima Perpanjangan
+                                                Konfirmasi Hilang
                                             </Button>
 
                                             <DialogClose as-child>
@@ -320,47 +298,44 @@ const columns = [
                                 </Dialog>
                                 <Dialog
                                     v-model:open="isOpenBatal[user.id]"
-                                    :key="'batal-' + user.id"
+                                    :key="'dikembalikan-' + user.id"
                                 >
                                     <DialogTrigger as-child>
                                         <Button
                                             variant="secondary"
                                             size="icon"
-                                            class="w-full sm:w-20"
+                                            class="w-full sm:w-30"
                                         >
-                                            Batalkan
+                                            Dikembalikan
                                         </Button>
                                     </DialogTrigger>
 
                                     <DialogContent class="sm:max-w-xl">
                                         <DialogHeader>
                                             <DialogTitle>
-                                                Konfirmasi Pembatalan Pengajuan
-                                                Peminjaman Buku
+                                                Konfirmasi Pengembalian Buku
                                             </DialogTitle>
 
                                             <h1 class="mt-2">
-                                                Pengajuan oleh:<br />
-                                                <strong>
-                                                    {{ user.users?.name }}
-                                                </strong>
+                                                Dikembalikan oleh:<br />
+                                                <strong>{{
+                                                    user.users?.name
+                                                }}</strong>
                                             </h1>
 
                                             <h1 class="mt-2">
                                                 Judul buku:<br />
-                                                <strong>
-                                                    {{
-                                                        user.databukus
-                                                            ?.judul_buku
-                                                    }}
-                                                </strong>
+                                                <strong>{{
+                                                    user.databukus?.judul_buku
+                                                }}</strong>
                                             </h1>
 
                                             <DialogDescription>
-                                                Apakah Anda yakin ingin
-                                                membatalkan pengajuan ini?
-                                                Setelah dibatalkan, pengajuan
-                                                tidak dapat dikembalikan lagi.
+                                                Apakah Anda yakin ingin menandai
+                                                buku ini sebagai
+                                                <strong>dikembalikan</strong>?
+                                                Setelah dikonfirmasi, data
+                                                peminjaman akan diperbarui.
                                             </DialogDescription>
                                         </DialogHeader>
 
@@ -370,11 +345,11 @@ const columns = [
                                                 @click="
                                                     handleUpdateStatus(
                                                         user.id,
-                                                        'batal',
+                                                        'dikembalikan',
                                                     )
                                                 "
                                             >
-                                                Batalkan Pengajuan
+                                                Konfirmasi Pengembalian
                                             </Button>
 
                                             <DialogClose as-child>
@@ -397,7 +372,7 @@ const columns = [
         <Pagination
             :previousPage="pagination.previous"
             :nextPage="pagination.next"
-            :links="props.permintaanResource.links"
+            :links="props.pengembalianResource.links"
         />
     </AppLayout>
 </template>

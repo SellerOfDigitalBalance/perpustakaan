@@ -40,7 +40,7 @@ const props = defineProps<{
     peminjamanbukuResource: PaginatedResponse<Book>;
     all_category_names: string[];
 }>();
-// console.log(props.peminjamanbukuResource);
+console.log(props.peminjamanbukuResource);
 const pagination = computed(() => ({
     previous: props.peminjamanbukuResource.prev_page_url,
     next: props.peminjamanbukuResource.next_page_url,
@@ -74,7 +74,7 @@ const updatePeminjamanBukus = () => {
             column: searchBy.value,
             category: categorySearch.value,
         },
-        { preserveState: false },
+        { preserveState: true },
     );
 };
 function toggleSort(key: string) {
@@ -148,7 +148,7 @@ const resetFilters = () => {
                                 placeholder="Cari..."
                             />
                             <select
-                                id="perPage"
+                                id="searchBy"
                                 v-model="searchBy"
                                 @change="updatePeminjamanBukus"
                                 class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:ring-2 focus:ring-primary focus:outline-none sm:w-40"

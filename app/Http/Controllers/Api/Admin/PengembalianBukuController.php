@@ -7,7 +7,7 @@ use App\Models\PeminjamanBuku;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class PermintaanPerpanjanganPeminjaman extends Controller
+class PengembalianBukuController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +15,8 @@ class PermintaanPerpanjanganPeminjaman extends Controller
     public function index(Request $request)
     {
         $query = PeminjamanBuku::with(['databukus', 'users'])
-            ->where('status_perpanjangan', 'pending');
+            ->where('status', 'dipinjam');
+        $perPage = request()->get('per_page', 8);
         if ($request->search) {
             $search = strtolower($request->search);
             $column = $request->column;
@@ -50,7 +51,7 @@ class PermintaanPerpanjanganPeminjaman extends Controller
             $sortColumn = $request->input('sortColumn');
             $order = $request->input('order');
             // dd($sortColumn);
-            if (in_array($sortColumn, ['users_id', 'judul_buku', 'kode_transaksi', 'jatuh_tempo'])) {
+            if (in_array($sortColumn, ['users_id', 'judul_buku', 'kode_transaksi'])) {
                 if ($sortColumn === 'users_id') {
                     // Sort berdasarkan nama anggota (relasi users)
                     $query->join('users', 'peminjaman_bukus.users_id', '=', 'users.id')
@@ -63,12 +64,6 @@ class PermintaanPerpanjanganPeminjaman extends Controller
                         ->select('peminjaman_bukus.*');
                 } elseif ($sortColumn === 'kode_transaksi') {
                     $query->orderBy($sortColumn, $order);
-                } elseif ($sortColumn === 'jatuh_tempo') {
-
-                    // SORTING berdasarkan selisih jatuh tempo (tanpa kehilangan relasi databukus)
-                    $query->orderByRaw(
-                        "DATEDIFF(peminjaman_bukus.tanggal_jatuh_tempo, peminjaman_bukus.tanggal_peminjaman) $order"
-                    );
                 }
             } else {
                 // Jika sortColumn tidak valid, bisa diberi default atau error handling
@@ -78,11 +73,9 @@ class PermintaanPerpanjanganPeminjaman extends Controller
         } else {
             $query->latest();
         }
-
-        $perPage = request()->get('per_page', 8);
-        $permintaanResource = $query->paginate($perPage)->appends($request->all());
-        return Inertia::render('admin/permintaan/Index', [
-            'permintaanResource' => $permintaanResource,
+        $pengembalianResource = $query->paginate($perPage)->appends($request->all());
+        return Inertia::render('admin/pengembalian/Index', [
+            'pengembalianResource' => $pengembalianResource,
             // 'filters' => $request->only('search', 'column', 'sortColumn', 'order', 'level'),
         ]);
     }
@@ -101,23 +94,23 @@ class PermintaanPerpanjanganPeminjaman extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'status_perpanjangan' => 'required',
-            'tanggal_jatuh_tempo' => 'nullable',
+            'status' => 'required',
+            'tabbgal_pengembalian' => 'nullable',
         ]);
         // dd($validated);
 
         PeminjamanBuku::where('id', $request->id)->update($validated);
 
         // Cek status
-        if ($validated['status_perpanjangan'] === 'approved') {
+        if ($validated['status'] === 'dikembalikan') {
             return redirect()
                 ->back()   // sesuaikan dengan route yang kamu punya
-                ->with('success', 'Pengajuan peminjaman berhasil diterima.');
+                ->with('success', 'Penegmbalian buku berhasil dikembalikan.');
         }
 
-        if ($validated['status_perpanjangan'] === 'rejected') {
+        if ($validated['status'] === 'hilang') {
             return redirect()->back() // sesuaikan dengan route kamu
-                ->with('error', 'Pengajuan peminjaman dibatalkan.');
+                ->with('error', 'Pengembalian buku hilang.');
         }
 
         // fallback default
