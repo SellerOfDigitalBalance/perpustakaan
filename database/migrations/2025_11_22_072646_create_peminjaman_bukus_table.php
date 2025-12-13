@@ -23,6 +23,7 @@ return new class extends Migration
             $table->enum('status_perpanjangan', ['none', 'pending', 'approved', 'rejected'])->default('none');
             $table->date('tanggal_pengembalian')->nullable();
             $table->string('catatan')->nullable();
+            $table->string('denda')->nullable();
             $table->timestamps();
         });
     }

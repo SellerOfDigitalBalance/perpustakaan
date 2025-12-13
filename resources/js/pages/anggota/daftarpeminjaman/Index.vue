@@ -104,10 +104,20 @@ const columns = [
     { key: 'judul_buku', label: 'Judul Buku', sortable: true },
     { key: 'penulis_buku', label: 'Penulis Buku', sortable: true },
     { key: 'penerbit_buku', label: 'Penerbit Buku', sortable: true },
+    { key: 'status', label: 'Status', sortable: true },
     { key: 'jatuh_tempo', label: 'Jatuh Tempo', sortable: true },
-    { key: 'action', label: 'Aksi', sortable: true },
+    { key: 'action', label: 'Aksi', sortable: false },
 ];
+function hitungHari(
+    tanggalPeminjaman: string | Date,
+    tanggalJatuhTempo: string | Date,
+): string {
+    const peminjaman = new Date(tanggalPeminjaman).getTime();
+    const jatuhTempo = new Date(tanggalJatuhTempo).getTime();
 
+    const selisihHari = Math.ceil((jatuhTempo - peminjaman) / 86400000);
+    return `${selisihHari} hari`;
+}
 const isOpen = ref<Record<number, boolean>>({});
 const handleAjukanPerpanjangan = (
     data_bukus_id: number,
@@ -153,12 +163,12 @@ const handleAjukanPerpanjangan = (
                                 class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:ring-2 focus:ring-primary focus:outline-none sm:w-40"
                             >
                                 <option value="">- Semua Kolom -</option>
-                                <option value="users_id">Nama Anggota</option>
-                                <option value="kode_transaksi">
-                                    Kode Transaksi
+                                <option value="judul_buku">Judul Buku</option>
+                                <option value="penulis_buku">
+                                    Penulis Buku
                                 </option>
-                                <option value="data_bukus_id">
-                                    Judul Buku
+                                <option value="penerbit_buku">
+                                    Penerbit Buku
                                 </option>
                             </select>
                         </div>
@@ -252,19 +262,11 @@ const handleAjukanPerpanjangan = (
                         </template>
                         <template #jatuh_tempo="{ item }">
                             {{
-                                Math.ceil(
-                                    (Number(
-                                        new Date(item.tanggal_jatuh_tempo),
-                                    ) -
-                                        Number(
-                                            new Date(item.tanggal_peminjaman),
-                                        )) /
-                                        86400000,
-                                ) + ' hari'
+                                hitungHari(
+                                    item.tanggal_peminjaman,
+                                    item.tanggal_jatuh_tempo,
+                                )
                             }}
-                        </template>
-                        <template #categories_id="{ item }">
-                            {{ item.databukus?.category?.name || 'Tidak Ada' }}
                         </template>
                         <template #action="{ item: pengajuananggotas }">
                             <div class="flex items-center gap-2">
@@ -279,6 +281,12 @@ const handleAjukanPerpanjangan = (
                                 <Dialog
                                     v-model:open="isOpen[pengajuananggotas.id]"
                                     :key="'perpanjang-' + pengajuananggotas.id"
+                                    v-if="
+                                        hitungHari(
+                                            pengajuananggotas.tanggal_peminjaman,
+                                            pengajuananggotas.tanggal_jatuh_tempo,
+                                        ) === '1 hari'
+                                    "
                                 >
                                     <DialogTrigger as-child>
                                         <Button

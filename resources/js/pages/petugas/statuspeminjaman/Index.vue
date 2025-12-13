@@ -93,13 +93,31 @@ const resetFilters = () => {
 const columns = [
     { key: 'no', label: 'No' },
     { key: 'users_id', label: 'Nama Anggota', sortable: true },
-    { key: 'kode_transaksi', label: 'Kode Transaksi', sortable: true },
-    { key: 'data_bukus_id', label: 'judul Buku', sortable: true },
-    // { key: 'tanggal_peminjaman', label: 'Tanggal Peminjaman', sortable: true },
-    { key: 'status', label: 'status', sortable: true },
-    // { key: 'catatan', label: 'catatan', sortable: true },
+    { key: 'data_bukus_id', label: 'Judul Buku', sortable: true },
+    { key: 'jatuh_tempo', label: 'Jatuh Tempo', sortable: true },
+    { key: 'status', label: 'Status', sortable: true },
+    { key: 'denda', label: 'Denda', sortable: true },
     { key: 'actions', label: 'Aksi' },
 ];
+
+function hitungTerlambat(tanggalJatuhTempo: string | Date): string {
+    const jatuhTempo = new Date(tanggalJatuhTempo);
+    const today = new Date();
+
+    // Samakan jam ke 00:00:00
+    jatuhTempo.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    const selisihMs = jatuhTempo.getTime() - today.getTime();
+    const selisihHari = Math.floor(selisihMs / 86400000);
+
+    // Jika belum lewat jatuh tempo
+    if (selisihHari <= 0) {
+        return '0 hari';
+    }
+
+    return `${selisihHari} hari`;
+}
 </script>
 <template>
     <Head title="Peminjaman Buku" />
@@ -218,6 +236,12 @@ const columns = [
                         </template>
                         <template #data_bukus_id="{ item }">
                             {{ item.databukus?.judul_buku || 'Tidak Ada' }}
+                        </template>
+                        <template #jatuh_tempo="{ item }">
+                            <span v-if="item.status === 'pending'"> - </span>
+                            <span v-else>
+                                {{ hitungTerlambat(item.tanggal_jatuh_tempo) }}
+                            </span>
                         </template>
                         <template #actions="{ item: statuspeminjamans }">
                             <div class="flex items-center gap-2">

@@ -48,18 +48,18 @@ class PeminjamanBukuController extends Controller
         if ($request->has('sortColumn') && $request->has('order')) {
             $sortColumn = $request->input('sortColumn');
             $order = $request->input('order');
-
-            if ($sortColumn === 'users_id') {
-                $query->join('users_id', 'users.users_id', '=', 'users.id')
-                    ->orderBy('users.name', $order)
-                    ->select('users.*');
-            } elseif ($sortColumn === 'data_bukus_id') {
-                $query->join('data_bukus_id', 'databukus.data_bukus_id', '=', 'databukus.id')
-                    ->orderBy('databukus.name', $order)
-                    ->select('databukus.*');
-            } elseif ($sortColumn === 'kode_transaksi') {
+            // dd($sortColumn);
+            if ($sortColumn === 'categories_id') {
+                $query->join('categories', 'data_bukus.categories_id', '=', 'categories.id')
+                    ->orderBy('categories.name', $order)
+                    ->select('data_bukus.*');
+            } elseif ($sortColumn === 'judul_buku') {
                 $query->orderBy($sortColumn, $order);
-            } elseif ($sortColumn === 'status') {
+            } elseif ($sortColumn === 'penulis_buku') {
+                $query->orderBy($sortColumn, $order);
+            } elseif ($sortColumn === 'penerbit_buku') {
+                $query->orderBy($sortColumn, $order);
+            } elseif ($sortColumn === 'tahun_terbit') {
                 $query->orderBy($sortColumn, $order);
             }
         } else {

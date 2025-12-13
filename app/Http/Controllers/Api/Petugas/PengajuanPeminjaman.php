@@ -104,7 +104,7 @@ class PengajuanPeminjaman extends Controller
         // dd($validated);
         PeminjamanBuku::where('id', $request->id)->update($validated);
 
-
+        // dd($validated);
         // Cek status
         if ($validated['status'] === 'dipinjam') {
             return redirect()->back()->with('success', 'Pengajuan Peminjaman Diterima');

@@ -21,6 +21,44 @@ class DaftarPeminjamanBukuController extends Controller
         $query = PeminjamanBuku::with('databukus', 'databukus.category')
             ->where('users_id', auth()->id())
             ->where('status', 'dipinjam');
+        if ($request->search) {
+            $search = strtolower($request->search);
+            $column = $request->column;
+
+            if (in_array($column, ['judul_buku', 'penulis_buku', 'penerbit_buku', 'tahun_terbit'])) {
+                $query->whereHas('databukus', function ($q) use ($search, $column) {
+                    $q->where($column, 'like', "%{$search}%");
+                });
+            }
+        }
+
+        if ($request->has(['sortColumn', 'order'])) {
+            $sortColumn = $request->input('sortColumn');
+            $order = $request->input('order');
+
+            // kolom yang ada di relasi data_bukus
+            $dataBukuColumns = ['judul_buku', 'penulis_buku', 'penerbit_buku', 'tahun_terbit'];
+
+            if (in_array($sortColumn, $dataBukuColumns)) {
+
+                $query->join('data_bukus', 'peminjaman_bukus.data_bukus_id', '=', 'data_bukus.id')
+                    ->orderBy("data_bukus.$sortColumn", $order)
+                    ->select('peminjaman_bukus.*');
+            } elseif (in_array($sortColumn, ['kode_transaksi', 'status'])) {
+
+                $query->orderBy($sortColumn, $order);
+            } elseif ($sortColumn === 'jatuh_tempo') {
+
+                // SORTING jatuh_tempo (selisih tanggal)
+                $query->orderByRaw(
+                    "DATEDIFF(tanggal_jatuh_tempo, tanggal_peminjaman) $order"
+                );
+            }
+        } else {
+            $query->latest();
+        }
+
+
         $perPage = request()->get('per_page', 8);
         $daftar = $query->paginate($perPage)->appends($request->all());
         return Inertia::render('anggota/daftarpeminjaman/Index', [

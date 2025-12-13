@@ -121,7 +121,7 @@ const handleUpdateStatus = (id: number, type: 'terima' | 'batal') => {
                     : null,
             tanggal_jatuh_tempo:
                 type === 'terima'
-                    ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                    ? new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
                           .toISOString()
                           .split('T')[0]
                     : null,
@@ -156,7 +156,7 @@ const handleUpdateStatus = (id: number, type: 'terima' | 'batal') => {
                                 placeholder="Cari..."
                             />
                             <select
-                                id="perPage"
+                                id="searchBy"
                                 v-model="searchBy"
                                 @change="updatepengajuanpeminjamans"
                                 class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:ring-2 focus:ring-primary focus:outline-none sm:w-40"

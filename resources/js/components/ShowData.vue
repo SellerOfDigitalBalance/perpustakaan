@@ -25,14 +25,14 @@ const props = defineProps<Props>();
             >
                 <!-- Label -->
                 <TableCell
-                    class="w-[200px] bg-muted/30 font-medium whitespace-nowrap"
+                    class="w-[200px] bg-muted/30 font-medium whitespace-normal"
                     :style="{ width: col.width }"
                 >
                     {{ col.label }}
                 </TableCell>
 
                 <!-- Value -->
-                <TableCell class="whitespace-nowrap">
+                <TableCell class="whitespace-normal">
                     <slot
                         :name="col.key"
                         :value="props.data[col.key]"

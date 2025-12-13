@@ -25,6 +25,7 @@ class PeminjamanBukuResource extends JsonResource
             'status' => $this->status,
             'tanggal_pengembalian' => $this->tanggal_pengembalian,
             'catatan' => $this->catatan,
+            'denda' => $this->denda,
 
             'users' => new UserResource($this->whenLoaded('users')),
             'databukus' => new DataBukuResource($this->whenLoaded('databukus')),
